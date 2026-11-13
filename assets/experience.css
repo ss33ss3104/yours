@@ -65,12 +65,13 @@ summary,label{font-weight:700}
 .site-loader.is-done{opacity:0;visibility:hidden}
 .site-loader-in{display:flex;align-items:center;gap:clamp(10px,1vw,14px)}
 .site-loader img{display:block;width:clamp(38px,3.2vw,50px);height:auto;animation:loader-mark .7s var(--glide) .1s backwards}
-.site-loader-word{display:flex;overflow:hidden;padding:.08em 0 .42em;margin:-.08em 0 -.42em;font-family:var(--round-font);font-weight:700;font-size:clamp(36px,3.4vw,52px);line-height:1.2;letter-spacing:-.03em;color:var(--ink)}
+.site-loader-word{display:flex;font-family:var(--round-font);font-weight:700;font-size:clamp(36px,3.4vw,52px);line-height:1.2;letter-spacing:-.03em;color:var(--ink)}
 .site-loader-word i{display:block;font-style:normal;animation:loader-char .6s var(--glide) calc(var(--n)*70ms + .3s) backwards}
 html.motion-off .site-loader{display:none}
 @media(prefers-reduced-motion:reduce){.site-loader{display:none}}
 @keyframes loader-mark{from{opacity:0;transform:scale(.86)}}
-@keyframes loader-char{from{opacity:0;transform:translateY(70%)}}
+/* 文字は切り取りの枠を使わず、少し下からふわっと出す（iPhoneで y の下が切れるのを避ける） */
+@keyframes loader-char{from{opacity:0;transform:translateY(35%)}}
 @keyframes loader-failsafe{to{opacity:0;visibility:hidden}}
 
 /* FV：写真を全面に、左に縦書きの細い明朝のキャッチ、その右下に短い説明と2つの入口。キーカラーは黄色。写真はゆっくり寄り続ける */

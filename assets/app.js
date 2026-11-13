@@ -237,8 +237,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
     }
     return out;
   };
-  const drawWaves = now => {
-    const t = now / 1000, grow = 1 + (parseFloat(sec.style.getPropertyValue('--p')) || 0) * .6;
+  const drawWaves = (now, still) => {
+    const t = now / 1000, grow = still ? 1 : 1 + (parseFloat(sec.style.getPropertyValue('--p')) || 0) * .6;
     layers.forEach(L => {
       const pts = points(L, t, grow);
       if (L.paths) {
@@ -263,7 +263,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
   // スマホで波が画面の下に隠れている間（スクロール前）は描かない。見えている間は毎フレーム描く（間引くとカクついて見える）
   const hidden = () => touchUI && innerWidth <= 760 && (parseFloat(sec.style.getPropertyValue('--p')) || 0) <= 0;
   const loop = now => { waveRaf = 0; if (!hidden()) drawWaves(now); if (moves() && seen) waveRaf = requestAnimationFrame(loop); };
-  const startWaves = () => { if (!waveRaf) waveRaf = requestAnimationFrame(loop); };
+  // スマホは波を動かさず、一度だけ描いて止めておく（動かすとFVの処理が重くなりカクつく）。位置の上下はCSSで動く
+  const startWaves = () => { if (touchUI) { drawWaves(0, true); return; } if (!waveRaf) waveRaf = requestAnimationFrame(loop); };
   if ('IntersectionObserver' in window) new IntersectionObserver(([en]) => { seen = en.isIntersecting; if (seen) startWaves(); }).observe(tideEl);
   onWidthResize(() => { sizeWaves(); startWaves(); });
   new MutationObserver(startWaves).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
