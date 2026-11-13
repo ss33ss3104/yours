@@ -646,4 +646,5 @@ p,li,dd{text-wrap:pretty}
 .tide-front{position:absolute;display:block;left:0;top:calc(var(--edge)*.42);width:100%;height:calc(var(--edge) + 6px);fill:#f5f0e5}
 /* iPhoneで横にずれて右に余白が出ないよう、ページ全体の横方向を切り落とす（stickyは保つ clip を使う） */
 html{overflow-x:clip}
-
+/* Lenis と CSS のなめらかスクロールは競合するので、Lenis が動いている間は CSS 側を切る */
+html.lenis{scroll-behavior:auto}

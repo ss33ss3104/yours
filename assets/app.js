@@ -156,6 +156,30 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
   if('ResizeObserver' in window){const ro=new ResizeObserver(()=>{measure();onScroll();});ro.observe(document.body);}
 })();
 
+/* なめらかなスクロール（Lenis 1.1.20・MIT、assets/vendor/）。試用中：URLに ?lenis=0 を付けると無効にして比べられる。
+   スマホの指のスクロールにも効かせる（syncTouch）。動きを止める設定・動きを減らす設定・メニューを開いている間は使わない。 */
+(() => {
+  if (!window.Lenis || new URLSearchParams(location.search).get('lenis') === '0' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const root = document.documentElement;
+  let lenis = null, raf = 0;
+  const loop = t => { lenis?.raf(t); raf = requestAnimationFrame(loop); };
+  const on = () => {
+    if (lenis) return;
+    lenis = new Lenis({ lerp: .1, smoothWheel: true, syncTouch: true, syncTouchLerp: .075, touchInertiaMultiplier: 30, anchors: { offset: -24 } });
+    if (!raf) raf = requestAnimationFrame(loop);
+  };
+  const off = () => { if (!lenis) return; lenis.destroy(); lenis = null; cancelAnimationFrame(raf); raf = 0; };
+  const sync = () => {
+    if (root.classList.contains('motion-off')) return off();
+    on();
+    if (document.body.classList.contains('nav-open')) lenis.stop(); else lenis.start();
+  };
+  new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ['class'] });
+  new MutationObserver(sync).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  sync();
+  window.__lenis = () => lenis;
+})();
+
 /* FV：写真と縦書きのキャッチ・説明・2つの入口。ロード画面は最低1.5秒見せ、写真とフォントが揃ったら本編を始める。届かなくても3.5秒で進める。 */
 (() => {
   const sec = document.querySelector('.rise'); if (!sec) return;
