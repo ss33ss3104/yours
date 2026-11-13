@@ -108,8 +108,14 @@ html.motion-off .site-loader{display:none}
 .rise-btn.is-line{border:1.5px solid rgba(255,255,255,.92);background:rgba(8,34,72,.32);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);text-shadow:0 1px 4px rgba(6,26,56,.45)}
 .rise-btn.is-line:hover{background:rgba(8,34,72,.5)}
 .rise-btn:focus-visible,.rise-scroll:focus-visible{outline:3px solid var(--key);outline-offset:4px}
-/* 2026-11-13：案B（外枠を光が周回）は、金属的でテイストに合わないとの本人判断で外した。代わりの動きは cta-motion-mock.html の C〜F から選んでもらう */
+/* 2026-11-13 案C（本人選択）：ボタンの外へ輪が広がって消える。左右のボタンで交互に。
+   案B（外枠を光が周回）は金属的でテイストに合わないため外した。輪は transform と opacity だけで動かす（描き直しが少ない） */
 .rise-btn{position:relative;isolation:isolate}
+.rise-btn::after{content:"";position:absolute;inset:0;border-radius:inherit;border:2px solid rgba(255,203,69,.9);opacity:0;pointer-events:none;animation:rise-ring 2.8s cubic-bezier(.2,.6,.3,1) 2.4s infinite}
+.rise-btn.is-line::after{border-color:rgba(255,255,255,.75);animation-delay:3.8s}
+@keyframes rise-ring{0%{transform:scale(1);opacity:.9}70%,100%{transform:scale(1.12,1.45);opacity:0}}
+html.motion-off .rise-btn::after{display:none}
+@media(prefers-reduced-motion:reduce){.rise-btn::after{display:none}}
 .rise-scroll{position:absolute;z-index:7;left:50%;bottom:clamp(10px,2.6svh,28px);translate:-50% 0;width:48px;height:44px;display:grid;place-items:center;color:var(--key);filter:drop-shadow(0 1px 3px rgba(0,0,0,.4))}
 .rise-scroll svg{width:36px;height:18px}
 /* 写真の上のヘッダーは白い文字にし、項目をスラッシュで区切る */
