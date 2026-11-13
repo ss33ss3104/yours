@@ -1,0 +1,203 @@
+/* yours PAPER（採用特設サイト・確認版）
+   白黒を基調にし、色は写真とキーカラーの黄色（企業サイトと共通の #ffcb45）だけ。
+   見出しは「大きな英字＋日本語」の2段。黄色は文字色にせず、マーカーと面で使う（白地での読みやすさのため）。 */
+:root{
+  --ink:#1f2222;--sub:#5d6461;--white:#fffefa;--key:#ffcb45;--line:#d4d6d0;--soft:#f3f2ec;
+  --g:max(clamp(20px,4.4vw,64px),calc((100vw - 1360px)/2));
+  --jp:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif;
+  --en:"Arial Black","Helvetica Neue",Arial,sans-serif;
+  --r:10px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:24px}
+body{margin:0;color:var(--ink);background:var(--white);font-family:var(--jp);font-weight:700;line-height:1.7;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+img{max-width:100%}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #1854a1;outline-offset:4px}
+mark{background:linear-gradient(transparent 58%,var(--key) 58%,var(--key) 92%,transparent 92%);color:inherit;padding:0 .04em}
+.skip{position:absolute;top:-100px;left:12px;z-index:100;background:#fff;padding:10px}.skip:focus{top:5px}
+.preview-note{text-align:center;background:var(--ink);color:#fff;font-size:11px;letter-spacing:.04em;padding:6px var(--g)}
+
+/* ヘッダー：冊子の題字（左）と号数（右） */
+.site-header{display:flex;align-items:center;gap:clamp(16px,2.4vw,40px);padding:22px var(--g) 0;position:relative;z-index:10}
+.masthead{display:inline-flex;flex-direction:column;gap:6px;white-space:nowrap}
+.masthead-name{font:900 clamp(28px,2.6vw,38px)/.9 var(--en);letter-spacing:-.045em}
+.masthead-name b{font-weight:900;margin-left:.22em;padding:0 .14em;background:var(--key);border-radius:4px}
+.masthead small{font-size:11px;letter-spacing:.12em}
+.masthead.is-white{color:#fff}.masthead.is-white b{color:var(--ink)}
+.header-nav{display:flex;gap:0;align-items:center;margin-left:auto;font-size:13px}
+.header-nav a{padding:4px clamp(10px,1.2vw,18px);border-left:1px solid var(--ink);line-height:1.2}
+.header-nav a:first-child{border-left:0}
+.header-nav a:hover{text-decoration:underline;text-underline-offset:.3em}
+.header-entry{display:inline-flex;align-items:center;gap:14px;height:46px;padding:0 20px;border-radius:999px;background:var(--ink);color:#fff;font-size:13px;white-space:nowrap;transition:background .2s,color .2s}
+.header-entry:hover{background:var(--key);color:var(--ink)}
+.issue{display:grid;justify-items:end;margin:0;font-family:var(--en);line-height:1;text-align:right}
+.issue b{font-size:clamp(34px,3.2vw,48px);letter-spacing:-.04em}
+.issue span{font-size:13px;letter-spacing:.02em;margin-top:4px}
+.menu-button,.mobile-nav{display:none}
+
+/* FV：日本語の大きなキャッチ → 写真 */
+.hero{padding:clamp(28px,4vw,56px) var(--g) 0}
+.hero-topline{display:flex;justify-content:flex-end;gap:16px;font-size:12px;letter-spacing:.08em}
+.hero-topline p{margin:0}
+/* FV：大きな日本語のキャッチを上、写真をその下に置く */
+.hero-title{margin:clamp(8px,1vw,16px) 0 clamp(16px,2vw,28px);font-size:min(112px,calc((100vw - var(--g)*2)/11.5),calc((100svh - 330px)/2.6));font-weight:900;line-height:1.18;letter-spacing:-.04em}
+.hero-image{position:relative;height:clamp(320px,calc(100svh - 380px),640px);border-radius:var(--r);overflow:hidden;background:#c7cbc6}
+/* 2.5D：写真の上にWebGLの描画を重ねる。準備できるまでは下の静止画を見せる */
+.hero-image img{width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;animation:hero-in 1.3s ease-out both}
+.hero-image::after{content:"";position:absolute;inset:0;background:linear-gradient(200deg,rgba(10,30,60,.28),rgba(10,30,60,0) 45%);pointer-events:none}
+.hero-image-tag{position:absolute;z-index:1;right:clamp(20px,4vw,56px);top:clamp(20px,3.5vw,48px);text-align:right;color:#fff;font-size:clamp(26px,3.8vw,56px);font-weight:900;line-height:1.25;letter-spacing:-.04em;text-shadow:0 1px 2px rgba(10,30,60,.45),0 4px 20px rgba(10,30,60,.35)}
+.hero-image-tag strong{color:var(--key)}
+.hero-bottom{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid var(--ink);padding:16px 0;font-size:13px}
+.hero-bottom a{white-space:nowrap}
+
+/* 見出し：大きな英字＋日本語 */
+.section{padding:clamp(80px,9vw,140px) var(--g)}
+.mag-head{margin:0 0 clamp(36px,4.5vw,64px)}
+.mag-en{display:block;font:900 clamp(52px,8vw,120px)/.9 var(--en);letter-spacing:-.04em}
+.mag-head h2,.challenge-title h2{margin:clamp(8px,1vw,14px) 0 0;font-size:clamp(26px,3.6vw,56px);font-weight:900;line-height:1.25;letter-spacing:-.02em}
+
+/* 私たちの想い */
+.message-grid{display:grid;grid-template-columns:1fr 1fr;gap:8%;align-items:center}
+.message-big{margin:0;font-size:clamp(56px,8vw,124px);font-weight:900;line-height:1.08;letter-spacing:-.06em}
+.message-body{max-width:540px}
+.message-body .lead{font-size:clamp(24px,2.5vw,36px);font-weight:900;line-height:1.5;letter-spacing:-.02em;margin:0 0 22px}
+.message-body .sub{font-size:clamp(17px,1.5vw,21px);line-height:1.8;margin:0 0 18px}
+.message-body p:not(.lead):not(.sub){font-size:16px;font-weight:500;line-height:2;margin:0 0 18px}
+.inline-link{display:inline-flex;gap:28px;border-bottom:2px solid var(--ink);padding:10px 0 6px;font-size:14px;margin-top:6px}
+.inline-link:hover{background:linear-gradient(transparent 60%,var(--key) 60%)}
+
+/* 取り組み（CHALLENGE）：PCは左に縦書きの見出し、右に3行 */
+.challenge{background:var(--soft);border-radius:var(--r);margin:0 calc(var(--g)*.5)}
+.challenge-layout{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(28px,4vw,72px);align-items:start}
+.challenge-title{display:flex;gap:clamp(8px,1vw,16px);position:sticky;top:24px}
+.challenge-title .mag-en,.challenge-title h2{writing-mode:vertical-rl}
+.challenge-title .mag-en{font-size:clamp(64px,7.4vw,112px);line-height:.86}
+.challenge-title h2{margin:0;font-size:clamp(28px,3vw,46px);letter-spacing:.04em;line-height:1.2}
+.challenge-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
+.challenge-item{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(24px,3.4vw,56px);align-items:center;padding:clamp(28px,3.4vw,48px) 0;border-bottom:1px solid var(--ink)}
+.challenge-no{display:block;font-size:13px;letter-spacing:.08em;color:var(--sub);margin-bottom:10px}
+.challenge-text h3{margin:0 0 16px;font-size:clamp(24px,2.6vw,38px);font-weight:900;line-height:1.35;letter-spacing:-.02em}
+.challenge-text p{margin:0 0 14px;font-size:16px;font-weight:500;line-height:2}
+.challenge-visual{display:flex;justify-content:center;align-items:center;gap:6%;aspect-ratio:16/10;border-radius:var(--r);background:var(--key);overflow:hidden}
+.challenge-visual img{width:36%;height:auto;object-fit:contain}
+.challenge-visual img:nth-child(1){transform:rotate(-7deg) translateY(-6%)}
+.challenge-visual img:nth-child(2){transform:rotate(6deg) translateY(8%)}
+/* 3つの絵に違いを出す：1は黄色の面、2は黒の面、3は白地に黄色の円。アイコンの大小も変える */
+.challenge-item:nth-child(1) .challenge-visual img:nth-child(1){width:46%}.challenge-item:nth-child(1) .challenge-visual img:nth-child(2){width:28%;align-self:flex-end;margin-bottom:8%}
+.challenge-item:nth-child(2) .challenge-visual{background:var(--ink)}
+.challenge-item:nth-child(2) .challenge-visual img:nth-child(1){width:30%;align-self:flex-start;margin-top:8%}.challenge-item:nth-child(2) .challenge-visual img:nth-child(2){width:44%}
+.challenge-item:nth-child(3) .challenge-visual{background:radial-gradient(circle at 50% 52%,var(--key) 0 34%,transparent 34.5%),#fff;border:1px solid var(--ink)}
+.challenge-item:nth-child(3) .challenge-visual img:nth-child(1){width:40%}.challenge-item:nth-child(3) .challenge-visual img:nth-child(2){width:24%;align-self:flex-start;margin-top:6%}
+.challenge-note{margin:22px 0 0;font-size:13px;font-weight:500;color:var(--sub);line-height:1.9}
+
+/* 募集要項：変わりにくい3項目だけを3列のカードで。条件は各求人ページへ */
+.jobs-intro{max-width:720px;margin:0 0 36px;font-size:17px;font-weight:500;line-height:2}
+.job-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,1.6vw,24px)}
+.job-card{display:flex;flex-direction:column;border:1px solid var(--ink);border-radius:var(--r);padding:clamp(22px,2.2vw,32px);background:#fff}
+.job-head{display:flex;align-items:center;gap:12px;margin:0 0 14px}
+.job-number{font:900 15px/1 var(--en);padding:6px 10px;background:var(--key);border-radius:4px}
+.job-category{color:var(--sub);font-size:13px;letter-spacing:.06em}
+.job-card h3{margin:0 0 12px;font-size:clamp(22px,2vw,30px);font-weight:900;line-height:1.3;letter-spacing:-.02em}
+.job-card h3 small{display:block;margin-top:4px;font-size:.6em;letter-spacing:0}
+.job-lead{margin:0 0 18px;font-size:15px;font-weight:500;line-height:1.9}
+.job-facts{margin:0 0 22px;border-top:1px solid var(--line)}
+.job-facts>div{padding:12px 0;border-bottom:1px solid var(--line)}
+.job-facts dt{font-size:12px;color:var(--sub);letter-spacing:.06em;margin-bottom:2px}
+.job-facts dd{margin:0;font-size:15px;font-weight:500;line-height:1.8}
+.job-detail-link{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:auto;padding:14px 18px;border-radius:999px;background:var(--ink);color:#fff;font-size:14px;font-weight:900;transition:background .2s,color .2s}
+.job-detail-link:hover,.job-detail-link:focus-visible{background:var(--key);color:var(--ink)}
+.job-detail-link span{font-size:18px;flex:none}
+.job-disclaimer{margin:26px 0 30px;padding:16px 20px;border-left:6px solid var(--key);background:var(--soft);border-radius:0 var(--r) var(--r) 0;font-size:14px;font-weight:500;line-height:1.9}
+.job-disclaimer span{display:block;color:var(--sub);font-size:13px}
+.button{min-height:60px;min-width:280px;display:inline-flex;align-items:center;justify-content:space-between;gap:40px;padding:16px 26px;border-radius:999px;font-size:15px;font-weight:900;transition:background .2s,color .2s}
+.button span{font:900 18px var(--en)}
+.button.dark{background:var(--ink);color:#fff}
+.button.dark:hover{background:var(--key);color:var(--ink)}
+.button.outline{border:2px solid var(--ink)}
+.button.outline:hover{background:var(--ink);color:#fff}
+
+/* よくある質問 */
+.faq{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:clamp(28px,6vw,96px);align-items:start;border-top:1px solid var(--line)}
+.faq .mag-head{margin:0}
+.faq-list{border-top:2px solid var(--ink)}
+details{border-bottom:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:18px;padding:22px 44px 22px 0;font-size:17px;position:relative}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font:500 26px Arial,sans-serif;position:absolute;right:6px;top:16px}
+details[open] summary::after{content:"−"}
+summary span{font:900 14px var(--en);padding:2px 8px;background:var(--key);border-radius:4px}
+details p{font-size:16px;font-weight:500;line-height:2;margin:0;padding:0 15px 24px 66px}
+
+/* 応募・お問い合わせ：黄色の面 */
+.entry{background:var(--key);border-radius:var(--r);margin:0 calc(var(--g)*.5)}
+.entry-layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:clamp(32px,5vw,80px);align-items:stretch}
+.entry-photo{margin:0;min-height:440px;border-radius:var(--r);overflow:hidden;background:#d9d6cc}
+.entry-photo img{width:100%;height:100%;object-fit:cover;object-position:55% 60%;display:block}
+.entry-catch{margin:0 0 20px;font-size:clamp(44px,7vw,108px);font-weight:900;line-height:1.15;letter-spacing:-.05em}
+.entry-lead{margin:0;font-size:clamp(18px,2vw,26px);line-height:1.7}
+.entry-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+.entry .button.outline:hover{background:var(--ink);color:#fff}
+.entry-phone{display:flex;align-items:center;gap:20px;margin-top:36px}
+.entry-phone span{font-size:14px}
+.entry-phone a{font:900 clamp(26px,3vw,42px) var(--en);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+
+/* フッター：角を丸めた黒い面 */
+.footer{padding:clamp(40px,5vw,72px) calc(var(--g)*.5) calc(var(--g)*.5)}
+.footer-card{background:var(--ink);color:#fff;border-radius:var(--r);padding:clamp(40px,5vw,72px) calc(var(--g)*.5 + clamp(16px,3vw,48px)) 24px}
+.footer-main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:32px;align-items:start;padding-bottom:36px;border-bottom:1px solid rgba(255,255,255,.35)}
+.footer-about{margin:0;font-size:14px;font-weight:500;line-height:2}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;gap:20px;padding-top:20px;font-size:13px}
+.footer-bottom nav{display:flex;flex-wrap:wrap}
+.footer-bottom nav a{padding:2px 14px;border-left:1px solid rgba(255,255,255,.5)}
+.footer-bottom nav a:first-child{border-left:0;padding-left:0}
+
+/* 出現：見出しと各行が下から入る（JSが動くときだけ） */
+.js .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+.js .reveal.is-in{opacity:1;transform:none}
+@keyframes hero-in{from{transform:scale(1.04);opacity:.6}to{transform:scale(1);opacity:1}}
+
+@media(max-width:1100px){.header-nav{display:none}.issue{order:3}.site-header .header-entry{margin-left:auto}.menu-button{display:flex;align-items:center;gap:8px;background:none;border:0;padding:10px 4px;font-size:13px}
+ .mobile-nav:not([hidden]){display:grid;position:absolute;top:100%;left:var(--g);right:var(--g);margin-top:10px;background:var(--ink);color:#fff;border-radius:var(--r);padding:12px 22px 20px;box-shadow:0 10px 20px #0002}
+ .mobile-nav a{display:flex;justify-content:space-between;border-bottom:1px solid #555e58;padding:14px 0;font-size:15px}}
+@media(max-width:760px){
+ .preview-note{font-size:10px}
+ .site-header{padding-top:14px;gap:10px;flex-wrap:wrap}
+ .masthead{flex-basis:100%}.masthead-name{font-size:26px}.masthead small{font-size:9px}
+ .issue{order:-1;position:absolute;right:var(--g);top:14px}.issue b{font-size:28px}.issue span{font-size:10px;margin-top:2px}
+ .site-header .header-entry{margin-left:0;height:40px;padding:0 16px;font-size:12px}
+ .menu-button{margin-left:auto}
+ .hero-topline{display:none}
+ .hero-title{font-size:calc((100vw - var(--g)*2)/9.1);line-height:1.25}
+ .hero-image{height:min(62vw + 160px,460px)}.hero-image img{object-position:47% 50%}
+ .hero-bottom{font-size:12px}
+ .mag-en{font-size:clamp(46px,14vw,72px)}
+ .message-grid,.faq,.footer-main{grid-template-columns:1fr}
+ .message-grid{gap:32px}
+ .message-big{font-size:clamp(52px,15vw,84px)}
+ .challenge{margin:0;border-radius:0}
+ .challenge-layout{grid-template-columns:1fr;gap:28px}
+ .challenge-title{position:static;display:block}
+ .challenge-title .mag-en,.challenge-title h2{writing-mode:horizontal-tb}
+ .challenge-title .mag-en{font-size:clamp(46px,14vw,72px);line-height:.9}
+ .challenge-title h2{margin-top:8px;font-size:clamp(26px,7vw,34px);letter-spacing:-.02em}
+ .challenge-item{grid-template-columns:1fr;gap:22px}
+ .challenge-visual{order:-1;aspect-ratio:16/9}
+ .challenge-text p,.jobs-intro,details p{font-size:15px}
+ .job-list{grid-template-columns:1fr}
+ .button{width:100%;min-width:0}
+ summary{font-size:16px;gap:12px}details p{padding-left:0}
+ .entry{margin:0;border-radius:0}.entry-layout{grid-template-columns:1fr}.entry-photo{min-height:0;aspect-ratio:4/3}
+ .entry-actions{display:grid}
+ .entry-phone{display:block}.entry-phone span,.entry-phone a{display:block}.entry-phone a{margin-top:6px}
+ .footer{padding:0}.footer-card{border-radius:0;padding:48px var(--g) 24px}
+ .footer-bottom{flex-direction:column;align-items:flex-start}
+ .footer-bottom nav{gap:10px 0}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.js .reveal{opacity:1;transform:none}}
+
+/* スマホでの改行：日本語は文節で折り返し、見出しは行の長さをそろえ、本文は最後の行が短くなりすぎないようにする */
+body{word-break:auto-phrase}
+h1,h2,h3,h4,dt,summary,figcaption{text-wrap:balance}
+p,li,dd{text-wrap:pretty}
