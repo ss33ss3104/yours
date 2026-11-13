@@ -21,11 +21,12 @@ mark{background:linear-gradient(transparent 58%,var(--key) 58%,var(--key) 92%,tr
 
 /* ヘッダー：冊子の題字（左）と号数（右） */
 .site-header{display:flex;align-items:center;gap:clamp(16px,2.4vw,40px);padding:22px var(--g) 0;position:relative;z-index:10}
-.masthead{display:inline-flex;flex-direction:column;gap:6px;white-space:nowrap}
+.masthead{display:inline-flex;flex-direction:column;gap:14px;white-space:nowrap}
 .masthead-name{font:900 clamp(28px,2.6vw,38px)/.9 var(--en);letter-spacing:-.045em}
-.masthead-name b{font-weight:900;margin-left:.22em;padding:0 .14em;background:var(--key);border-radius:4px}
+/* 題字「PAPER」はオレンジの下線（2026-11-14 本人指示。面で塗るのをやめた） */
+.masthead-name b{font-weight:900;margin-left:.22em;padding:0 .02em .16em;background:linear-gradient(var(--key),var(--key)) 0 100%/100% .13em no-repeat}
 .masthead small{font-size:11px;letter-spacing:.12em}
-.masthead.is-white{color:#fff}.masthead.is-white b{color:var(--ink)}
+.masthead.is-white{color:#fff}.masthead.is-white b{color:inherit}
 .header-nav{display:flex;gap:0;align-items:center;margin-left:auto;font-size:13px}
 .header-nav a{padding:4px clamp(10px,1.2vw,18px);border-left:1px solid var(--ink);line-height:1.2}
 .header-nav a:first-child{border-left:0}
