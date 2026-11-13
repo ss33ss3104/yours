@@ -1,3 +1,18 @@
+/* 画面の高さ：アドレスバーの出入りで変わらない「小さい画面の高さ」（100svh）を測っておき、スクロール連動の計算に使う。
+   幅が変わったときだけ測り直す（iOSはスクロールのたびにアドレスバーで高さが変わり、resizeが飛ぶため）。 */
+const stableVH = (() => {
+  const probe = document.createElement('div');
+  probe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:100svh;visibility:hidden;pointer-events:none';
+  document.documentElement.appendChild(probe);
+  let vh = probe.offsetHeight || innerHeight, w = innerWidth;
+  addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; vh = probe.offsetHeight || innerHeight; } }, { passive: true });
+  return () => vh;
+})();
+// 幅が変わったときだけ呼ぶresize（高さだけの変化は無視する）
+const onWidthResize = fn => { let w = innerWidth; addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; fn(); } }, { passive: true }); };
+const touchUI = matchMedia('(hover: none), (pointer: coarse)').matches;
+
+
 const chosen=new URLSearchParams(location.search).get('service');
 const select=document.querySelector('#service');
 if(select&&['work','living','short','undecided'].includes(chosen))select.value=chosen;
@@ -60,9 +75,9 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
   });
   const track=document.querySelector('[data-band]');
   const days=[...document.querySelectorAll('.day-list')].map(el=>({el,top:0,height:0}));
-  let vh=innerHeight;
+  let vh=stableVH();
   const measure=()=>{
-    vh=innerHeight;
+    vh=stableVH();
     const y=scrollY;
     items.forEach(it=>{const r=it.anchor.getBoundingClientRect();it.top=r.top+y;it.height=r.height;it.width=it.anchor.clientWidth;});
     days.forEach(d=>{const r=d.el.getBoundingClientRect();d.top=r.top+y;d.height=r.height;});
@@ -133,27 +148,13 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
   reduce.addEventListener?.('change',apply);
 
   addEventListener('scroll',()=>{onScroll();onHeader();},{passive:true});
-  addEventListener('resize',()=>{measure();onScroll();},{passive:true});
+  onWidthResize(()=>{measure();onScroll();});
   addEventListener('load',()=>{measure();onScroll();});
   document.fonts?.ready.then(()=>{measure();onScroll();});
   apply();onHeader();
   // 開閉や画像読み込みで高さが変わったときも測り直す。
   if('ResizeObserver' in window){const ro=new ResizeObserver(()=>{measure();onScroll();});ro.observe(document.body);}
 })();
-
-/* 画面の高さ：アドレスバーの出入りで変わらない「小さい画面の高さ」（100svh）を測っておき、スクロール連動の計算に使う。
-   幅が変わったときだけ測り直す（iOSはスクロールのたびにアドレスバーで高さが変わり、resizeが飛ぶため）。 */
-const stableVH = (() => {
-  const probe = document.createElement('div');
-  probe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:100svh;visibility:hidden;pointer-events:none';
-  document.documentElement.appendChild(probe);
-  let vh = probe.offsetHeight || innerHeight, w = innerWidth;
-  addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; vh = probe.offsetHeight || innerHeight; } }, { passive: true });
-  return () => vh;
-})();
-// 幅が変わったときだけ呼ぶresize（高さだけの変化は無視する）
-const onWidthResize = fn => { let w = innerWidth; addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; fn(); } }, { passive: true }); };
-const touchUI = matchMedia('(hover: none), (pointer: coarse)').matches;
 
 /* FV：写真と縦書きのキャッチ・説明・2つの入口。ロード画面は最低1.5秒見せ、写真とフォントが揃ったら本編を始める。届かなくても3.5秒で進める。 */
 (() => {
@@ -191,9 +192,17 @@ const touchUI = matchMedia('(hover: none), (pointer: coarse)').matches;
     { el: front, hk: 1, base: .45, a1: .13, a2: .06, l1: .7, l2: .3, s1: .45, s2: -.72, ph: 4.2 },
   ];
   let W = 0, E = 0, waveRaf = 0, seen = true;
+  let frontSvg = null, frontPath = null;
+  if (touchUI) {
+    const NS = 'http://www.w3.org/2000/svg';
+    frontSvg = document.createElementNS(NS, 'svg'); frontSvg.setAttribute('class', 'tide-front'); frontSvg.setAttribute('preserveAspectRatio', 'none'); frontSvg.setAttribute('aria-hidden', 'true');
+    frontPath = document.createElementNS(NS, 'path'); frontSvg.appendChild(frontPath);
+    front.after(frontSvg); tideEl.classList.add('has-svg-front');
+  }
   const sizeWaves = () => {
     W = tideEl.clientWidth; E = back.getBoundingClientRect().height / 1.2;
     layers.forEach(L => { if (L.el.tagName === 'svg') L.el.setAttribute('viewBox', `0 0 ${W} ${(E * L.hk).toFixed(1)}`); });
+    if (frontSvg) frontSvg.setAttribute('viewBox', `0 0 ${W} ${(E + 6).toFixed(1)}`);
   };
   const stageEl = sec.querySelector('.rise-stage');
   const points = (L, t, grow) => {
@@ -214,10 +223,9 @@ const touchUI = matchMedia('(hover: none), (pointer: coarse)').matches;
       } else {
         // 手前の波は紙を重ねず、FVそのものを波の形で切り抜く。下にはページの紙の地がそのまま見え、ABOUTと継ぎ目なくつながる
         if (touchUI) {
-          front.classList.add('is-js-wave');
-          // スマホ：FV全体（大きな写真）を毎フレーム切り抜くと描き直しが重いので、紙の帯だけを波の形に切る
-          const hh = (E + 4).toFixed(1), d = pts.map(([x, y], n) => (n ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1)).join('');
-          front.style.clipPath = `path('${d}L${W} ${hh}L0 ${hh}Z')`;
+          // スマホ：FV全体（大きな写真）を毎フレーム切り抜くと描き直しが重いので、紙の色の波をSVGで描いて重ねる
+          const hh = (E + 6).toFixed(1), d = pts.map(([x, y], n) => (n ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1)).join('');
+          frontPath.setAttribute('d', `${d}L${W} ${hh}L0 ${hh}Z`);
         } else {
           const off = tideEl.offsetTop + E * .42;
           const d = pts.reverse().map(([x, y]) => 'L' + x.toFixed(1) + ' ' + (y + off).toFixed(1)).join('');

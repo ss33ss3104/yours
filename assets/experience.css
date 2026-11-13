@@ -641,8 +641,9 @@ p,li,dd{text-wrap:pretty}
 .price strong,.price span{white-space:nowrap}
 @media(max-width:620px){.price strong{font-size:clamp(34px,10vw,46px)}}
 .nowrap{white-space:nowrap}
-/* スマホ：手前の波は app.js が紙の帯そのものを波の形に切る。固定の波形マスクは外す */
-.tide-wave.is-js-wave{-webkit-mask:none;mask:none}
+/* スマホ：手前の波は app.js がSVG（.tide-front）で描く。紙の帯（.tide-wave）は使わない */
+.has-svg-front .tide-wave{display:none}
+.tide-front{position:absolute;display:block;left:0;top:calc(var(--edge)*.42);width:100%;height:calc(var(--edge) + 6px);fill:#f5f0e5}
 /* iPhoneで横にずれて右に余白が出ないよう、ページ全体の横方向を切り落とす（stickyは保つ clip を使う） */
 html{overflow-x:clip}
 
