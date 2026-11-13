@@ -202,7 +202,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
     queued = false;
     const p = document.documentElement.classList.contains('motion-off') ? 0 : Math.min(1, Math.max(0, scrollY / (stableVH() * .45)));
     sec.style.setProperty('--p', p.toFixed(4));
-    sec.style.setProperty('--lift', (p * (2 - p) * stableVH() * .32).toFixed(1) + 'px');
+    // 波は指の動きと同じ一定の速さで上がる（以前は最初が速く途中で止まる曲線で、急に加速・減速して感じられた）
+    sec.style.setProperty('--lift', (p * stableVH() * .32).toFixed(1) + 'px');
   };
   addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(tide); } }, { passive: true });
   new MutationObserver(tide).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });

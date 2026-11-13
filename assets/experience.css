@@ -650,8 +650,8 @@ p,li,dd{text-wrap:pretty}
 html{overflow-x:clip}
 /* Lenis と CSS のなめらかスクロールは競合するので、Lenis が動いている間は CSS 側を切る */
 html.lenis{scroll-behavior:auto}
-/* スマホのFV：最初は波を画面の下に隠し、入口のボタンにかぶらないようにする。スクロールし始めると下から入ってくる（--p の最初の1/3で入りきる） */
-@media(max-width:760px){.motion-on .rise-tide{translate:0 calc(var(--liftmax,0px) - var(--lift,0px) + (1 - min(1, var(--p,0) * 3)) * (var(--edge) * 1.5 + 8px))}.motion-on .rise-copy{opacity:calc(1 - var(--p,0)*3)}}
+/* スマホのFV：最初は波を画面の下に隠し、入口のボタンにかぶらないようにする。スクロールに合わせて一定の速さで下から入ってくる */
+@media(max-width:760px){.motion-on .rise-tide{translate:0 calc(var(--liftmax,0px) - var(--lift,0px) + (1 - var(--p,0)) * (var(--edge) * 1.5 + 8px))}.motion-on .rise-copy{opacity:calc(1 - var(--p,0)*3)}}
 /* スマホ：スクロールを促す矢印は入口のボタンと重ならないよう、画面の最下部に置く（波は最初は画面外にある） */
 @media(max-width:760px){.rise-scroll{bottom:max(12px,env(safe-area-inset-bottom));filter:none}.rise-scroll svg{stroke-width:2.4}}
 /* 写真のゆっくりズームは描き直しを避けるため、専用の層で動かす */
