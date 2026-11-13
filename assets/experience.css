@@ -65,7 +65,7 @@ summary,label{font-weight:700}
 .site-loader.is-done{opacity:0;visibility:hidden}
 .site-loader-in{display:flex;align-items:center;gap:clamp(10px,1vw,14px)}
 .site-loader img{display:block;width:clamp(38px,3.2vw,50px);height:auto;animation:loader-mark .7s var(--glide) .1s backwards}
-.site-loader-word{display:flex;overflow:hidden;font-family:var(--round-font);font-weight:700;font-size:clamp(36px,3.4vw,52px);line-height:1.2;letter-spacing:-.03em;color:var(--ink)}
+.site-loader-word{display:flex;overflow:hidden;padding-bottom:.22em;margin-bottom:-.22em;font-family:var(--round-font);font-weight:700;font-size:clamp(36px,3.4vw,52px);line-height:1.2;letter-spacing:-.03em;color:var(--ink)}
 .site-loader-word i{display:block;font-style:normal;animation:loader-char .6s var(--glide) calc(var(--n)*70ms + .3s) backwards}
 html.motion-off .site-loader{display:none}
 @media(prefers-reduced-motion:reduce){.site-loader{display:none}}
@@ -108,17 +108,8 @@ html.motion-off .site-loader{display:none}
 .rise-btn.is-line{border:1.5px solid rgba(255,255,255,.92);background:rgba(8,34,72,.32);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);text-shadow:0 1px 4px rgba(6,26,56,.45)}
 .rise-btn.is-line:hover{background:rgba(8,34,72,.5)}
 .rise-btn:focus-visible,.rise-scroll:focus-visible{outline:3px solid var(--key);outline-offset:4px}
-/* 2026-11-13 案B：ボタンの外枠を光の粒が回り続ける（黄色のボタンは白、白枠のボタンは黄色）。
-   円錐グラデーションの角度 --orbit を回し、マスクで枠線の幅だけ見せる。動きを止めるボタン・動きを減らす設定では出さない */
-@property --orbit{syntax:"<angle>";inherits:false;initial-value:0deg}
+/* 2026-11-13：案B（外枠を光が周回）は、金属的でテイストに合わないとの本人判断で外した。代わりの動きは cta-motion-mock.html の C〜F から選んでもらう */
 .rise-btn{position:relative;isolation:isolate}
-.rise-btn::before{content:"";position:absolute;inset:-2px;border-radius:inherit;padding:2px;background:conic-gradient(from var(--orbit),transparent 0 70%,rgba(255,255,255,.95) 86%,transparent 92%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:rise-orbit 3.2s linear infinite;pointer-events:none}
-.rise-btn.is-line{border-color:rgba(255,255,255,.4)}
-.rise-btn.is-line::before{background:conic-gradient(from var(--orbit),transparent 0 64%,var(--key) 84%,transparent 92%);animation-delay:-1.6s}
-@keyframes rise-orbit{to{--orbit:360deg}}
-html.motion-off .rise-btn::before{display:none}
-html.motion-off .rise-btn.is-line{border-color:rgba(255,255,255,.92)}
-@media(prefers-reduced-motion:reduce){.rise-btn::before{display:none}.rise-btn.is-line{border-color:rgba(255,255,255,.92)}}
 .rise-scroll{position:absolute;z-index:7;left:50%;bottom:clamp(10px,2.6svh,28px);translate:-50% 0;width:48px;height:44px;display:grid;place-items:center;color:var(--key);filter:drop-shadow(0 1px 3px rgba(0,0,0,.4))}
 .rise-scroll svg{width:36px;height:18px}
 /* 写真の上のヘッダーは白い文字にし、項目をスラッシュで区切る */
@@ -651,4 +642,8 @@ html{overflow-x:clip}
 html.lenis{scroll-behavior:auto}
 /* スマホのFV：最初は波を画面の下に隠し、入口のボタンにかぶらないようにする。スクロールし始めると下から入ってくる（--p の最初の1/3で入りきる） */
 @media(max-width:760px){.motion-on .rise-tide{translate:0 calc((1 - min(1, var(--p,0) * 3)) * (var(--edge) * 1.5 + 8px));will-change:translate}.motion-on .rise-copy{opacity:calc(1 - var(--p,0)*3)}}
+/* スマホ：スクロールを促す矢印は入口のボタンと重ならないよう、画面の最下部に置く（波は最初は画面外にある） */
+@media(max-width:760px){.rise-scroll{bottom:max(12px,env(safe-area-inset-bottom));filter:none}.rise-scroll svg{stroke-width:2.4}}
+/* 写真のゆっくりズームは描き直しを避けるため、専用の層で動かす */
+.rise.is-ready .rise-photo img{will-change:transform}
 

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FV右下CTAの動き 見本</title>
+<!-- 見本用。dist の直下にコピーして表示する（assets/ を実サイトと共有）。本番ページには含めない。2026-11-13：光る表現（A・B）をやめ、C〜Fに差し替え。 -->
+<script src="assets/fonts.js" defer></script>
+<style>
+/* 実サイトのボタンの見た目だけを写す（experience.css の .rise-btn と同じ値）。サイトのCSSは読み込まない */
+:root{--key:#ffcb45;--key-deep:#f5b81c;--ink:#23292b;--glide:cubic-bezier(.22,1,.36,1);--round-font:"fot-tsukuardgothic-std","TsukuARdGothicStd-B","Tsukushi A Round Gothic","Hiragino Maru Gothic ProN",sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:#0d2240;font-family:var(--round-font);font-weight:700}
+.rise-actions{display:flex;flex-wrap:wrap;gap:clamp(12px,1.4vw,20px)}
+.rise-btn{display:inline-flex;align-items:center;justify-content:space-between;gap:20px;min-width:clamp(196px,16vw,236px);min-height:54px;padding:0 26px 0 32px;border-radius:999px;color:#fff;font-size:16px;font-weight:700;letter-spacing:.12em;text-decoration:none;transition:background .25s,box-shadow .25s}
+.rise-btn svg{width:26px;height:12px;flex:none;transition:transform .3s var(--glide)}
+.rise-btn:hover svg{transform:translateX(5px)}
+.rise-btn.is-fill{background:var(--key);color:var(--ink);box-shadow:0 6px 18px rgba(60,40,0,.28)}
+.rise-btn.is-fill:hover{background:var(--key-deep)}
+.rise-btn.is-line{border:1.5px solid rgba(255,255,255,.92);background:rgba(8,34,72,.32);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);text-shadow:0 1px 4px rgba(6,26,56,.45)}
+.rise-btn.is-line:hover{background:rgba(8,34,72,.5)}
+.mock-head{padding:28px 32px 8px;color:#fff}
+.mock-head h1{margin:0;font-size:20px;letter-spacing:.06em}
+.mock-head p{margin:6px 0 0;font-size:13px;opacity:.75;font-weight:500}
+.mock-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:16px 32px 40px}
+.mock{position:relative;overflow:hidden;border-radius:14px;min-height:250px;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-end;padding:22px 26px}
+.mock>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:80% 72%}
+.mock::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 80% 70% at 75% 72%,rgba(8,30,62,.8),rgba(8,30,62,.46) 52%,rgba(8,30,62,.1) 90%)}
+.mock-label{position:absolute;z-index:2;top:16px;left:20px;color:#fff;font-size:15px;letter-spacing:.06em}
+.mock-label small{display:block;font-size:12px;font-weight:500;opacity:.8;letter-spacing:.02em}
+.mock .rise-actions{position:relative;z-index:2;justify-content:flex-end;margin:0}
+.mock .rise-btn{position:relative;isolation:isolate}
+@media(max-width:860px){.mock-grid{grid-template-columns:1fr;padding:12px 16px 32px}.mock-head{padding:20px 16px 4px}}
+
+/* C：呼吸する輪。ボタンの外側に輪が広がって消える（左右で交互） */
+.v-c .rise-btn::after{content:"";position:absolute;inset:0;border-radius:inherit;border:2px solid rgba(255,203,69,.9);animation:ring 2.8s cubic-bezier(.2,.6,.3,1) infinite;pointer-events:none}
+.v-c .rise-btn.is-line::after{border-color:rgba(255,255,255,.75);animation-delay:1.4s}
+@keyframes ring{0%{transform:scale(1);opacity:.9}70%,100%{transform:scale(1.12,1.45);opacity:0}}
+
+/* D：矢印が流れ続ける。矢印が右へ抜けて左から戻る */
+.v-d .rise-btn .arrow-box{display:block;overflow:hidden;width:26px;height:12px;flex:none}
+.v-d .rise-btn svg{animation:arrow-run 2.4s cubic-bezier(.6,0,.3,1) infinite}
+.v-d .rise-btn.is-line svg{animation-delay:.3s}
+@keyframes arrow-run{0%,35%{transform:translateX(0);opacity:1}52%{transform:translateX(30px);opacity:0}53%{transform:translateX(-30px);opacity:0}72%,100%{transform:translateX(0);opacity:1}}
+
+/* E：ふわっと浮く。2つのボタンが交互にゆっくり浮き沈みし、浮いたときだけ影がやわらかく広がる */
+.v-e .rise-btn{animation:float 3.6s ease-in-out infinite}
+.v-e .rise-btn.is-line{animation-delay:-1.8s}
+.v-e .rise-btn::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:0 12px 24px rgba(20,30,40,.35);opacity:0;animation:float-shadow 3.6s ease-in-out infinite;animation-delay:inherit;pointer-events:none;z-index:-1}
+@keyframes float{50%{transform:translateY(-5px)}}
+@keyframes float-shadow{50%{opacity:1}}
+
+/* F：手描きの点線。ボタンのまわりの点線が、ゆっくり流れるように一周する（紙とイラストの世界観に合わせる） */
+.v-f .rise-btn{overflow:visible}
+.v-f .rise-btn .dash{position:absolute;inset:-7px;width:calc(100% + 14px);height:calc(100% + 14px);pointer-events:none;overflow:visible}
+.v-f .rise-btn .dash rect{x:1px;y:1px;width:calc(100% - 2px);height:calc(100% - 2px);rx:33px;fill:none;stroke:#ffcb45;stroke-width:2;stroke-linecap:round;stroke-dasharray:2 9;animation:dash-run 9s linear infinite}
+.v-f .rise-btn.is-line .dash rect{stroke:rgba(255,255,255,.9)}
+@keyframes dash-run{to{stroke-dashoffset:-220}}
+
+@media (prefers-reduced-motion:reduce){.mock *,.mock *::before,.mock *::after{animation:none!important}}
+</style>
+</head>
+<body>
+<header class="mock-head"><h1>FVのボタン：くり返しの動き 4案（光る表現をやめた版）</h1><p>実際の写真・ボタンの形で再生しています。気に入った案の記号を教えてください（組み合わせも可）。スマホでもそのまま見られます。</p></header>
+<main class="mock-grid">
+  <!-- 4案とも同じ構造。違いは .v-c〜.v-f のCSSだけ -->
+  <section class="mock v-c"><img src="assets/editorial/fukuoka-wide-3200.webp" alt=""><p class="mock-label">C　呼吸する輪<small>ボタンの外へ輪が広がって消える（左右で交互）</small></p>
+    <div class="rise-actions"><a class="rise-btn is-fill" href="#">yoursについて<svg viewBox="0 0 26 12" aria-hidden="true"><path d="M0 6h24M19 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a><a class="rise-btn is-line" href="#">見学・相談<svg viewBox="0 0 26 12" aria-hidden="true"><path d="M0 6h24M19 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a></div></section>
+  <section class="mock v-d"><img src="assets/editorial/fukuoka-wide-3200.webp" alt=""><p class="mock-label">D　矢印が流れ続ける<small>矢印が右へ抜けて左から戻る</small></p>
+    <div class="rise-actions"><a class="rise-btn is-fill" href="#">yoursについて<span class="arrow-box"><svg viewBox="0 0 26 12" aria-hidden="true"><path d="M0 6h24M19 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></span></a><a class="rise-btn is-line" href="#">見学・相談<span class="arrow-box"><svg viewBox="0 0 26 12" aria-hidden="true"><path d="M0 6h24M19 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></span></a></div></section>
+  <section class="mock v-e"><img src="assets/editorial/fukuoka-wide-3200.webp" alt=""><p class="mock-label">E　ふわっと浮く<small>交互にゆっくり浮き沈みし、浮いたときだけ影が広がる</small></p>
+    <div class="rise-actions"><a class="rise-btn is-fill" href="#">yoursについて<svg viewBox="0 0 26 12" aria-hidden="true"><path d="M0 6h24M19 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a><a class="rise-btn is-line" href="#">見学・相談<svg viewBox="0 0 26 12" aria-hidden="true"><path d="M0 6h24M19 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a></div></section>
+  <section class="mock v-f"><img src="assets/editorial/fukuoka-wide-3200.webp" alt=""><p class="mock-label">F　手描きの点線<small>まわりの点線がゆっくり流れて一周する</small></p>
+    <div class="rise-actions"><a class="rise-btn is-fill" href="#">yoursについて<svg viewBox="0 0 26 12" aria-hidden="true"><path d="M0 6h24M19 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><svg class="dash" aria-hidden="true"><rect/></svg></a><a class="rise-btn is-line" href="#">見学・相談<svg viewBox="0 0 26 12" aria-hidden="true"><path d="M0 6h24M19 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><svg class="dash" aria-hidden="true"><rect/></svg></a></div></section>
+</main>
+</body>
+</html>

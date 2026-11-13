@@ -260,8 +260,9 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
     });
   };
   const moves = () => document.documentElement.classList.contains('motion-on');
-  let lastDraw = 0;
-  const loop = now => { waveRaf = 0; if (!touchUI || now - lastDraw > 32) { lastDraw = now; drawWaves(now); } if (moves() && seen) waveRaf = requestAnimationFrame(loop); };
+  // スマホで波が画面の下に隠れている間（スクロール前）は描かない。見えている間は毎フレーム描く（間引くとカクついて見える）
+  const hidden = () => touchUI && innerWidth <= 760 && (parseFloat(sec.style.getPropertyValue('--p')) || 0) <= 0;
+  const loop = now => { waveRaf = 0; if (!hidden()) drawWaves(now); if (moves() && seen) waveRaf = requestAnimationFrame(loop); };
   const startWaves = () => { if (!waveRaf) waveRaf = requestAnimationFrame(loop); };
   if ('IntersectionObserver' in window) new IntersectionObserver(([en]) => { seen = en.isIntersecting; if (seen) startWaves(); }).observe(tideEl);
   onWidthResize(() => { sizeWaves(); startWaves(); });
