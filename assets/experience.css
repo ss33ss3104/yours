@@ -65,12 +65,12 @@ summary,label{font-weight:700}
 .site-loader.is-done{opacity:0;visibility:hidden}
 .site-loader-in{display:flex;align-items:center;gap:clamp(10px,1vw,14px)}
 .site-loader img{display:block;width:clamp(38px,3.2vw,50px);height:auto;animation:loader-mark .7s var(--glide) .1s backwards}
-.site-loader-word{display:flex;font-family:var(--round-font);font-weight:700;font-size:clamp(36px,3.4vw,52px);line-height:1.2;letter-spacing:-.03em;color:var(--ink)}
-.site-loader-word i{display:block;font-style:normal;animation:loader-char .6s var(--glide) calc(var(--n)*70ms + .3s) backwards}
+.site-loader-word{display:flex;align-items:baseline;font-family:var(--round-font);font-weight:700;font-size:clamp(36px,3.4vw,52px);line-height:1;letter-spacing:-.03em;color:var(--ink)}
+/* iPhone（WebKit）は、動いている要素を自分の箱の大きさで切り取って描く。y の下の払いが文字の箱からはみ出して切れるため、1文字ずつの箱を上下に広げておく */
+.site-loader-word i{display:block;padding:.24em 0 .34em;font-style:normal;animation:loader-char .6s var(--glide) calc(var(--n)*70ms + .3s) backwards}
 html.motion-off .site-loader{display:none}
 @media(prefers-reduced-motion:reduce){.site-loader{display:none}}
 @keyframes loader-mark{from{opacity:0;transform:scale(.86)}}
-/* 文字は切り取りの枠を使わず、少し下からふわっと出す（iPhoneで y の下が切れるのを避ける） */
 @keyframes loader-char{from{opacity:0;transform:translateY(35%)}}
 @keyframes loader-failsafe{to{opacity:0;visibility:hidden}}
 
@@ -172,7 +172,8 @@ body:has(.rise) .header:not(.is-stuck) .brand,body:has(.rise) .header:not(.is-st
 @keyframes rise-slow-zoom{from{transform:scale(1)}to{transform:scale(1.08)}}
 /* FVの下端：3層の波で写真から紙の地へ切り替える（--p・--lift は app.js） */
 :root{--edge:clamp(56px,min(8vw,13svh),124px);--tw:max(900px,100vw)}
-.rise-tide{position:absolute;left:0;right:0;bottom:-1px;z-index:6;height:calc(var(--edge)*1.5 + var(--lift,0px));pointer-events:none}
+/* せり上がりは高さを変えず（毎フレームの描き直しになる）、最大の高さで置いて translate で持ち上げる。--liftmax・--lift は app.js */
+.rise-tide{position:absolute;left:0;right:0;bottom:-1px;z-index:6;height:calc(var(--edge)*1.5 + var(--liftmax,0px));translate:0 calc(var(--liftmax,0px) - var(--lift,0px));will-change:translate;pointer-events:none}
 /* 奥：黄色。3枚つないだ波を横へ流し続け、上下にもゆっくり揺らす */
 .tide-back{position:absolute;display:block;top:0;left:0;width:100%;height:calc(var(--edge)*1.2)}
 .tide-back .grain{mix-blend-mode:soft-light;opacity:.9}
@@ -650,7 +651,7 @@ html{overflow-x:clip}
 /* Lenis と CSS のなめらかスクロールは競合するので、Lenis が動いている間は CSS 側を切る */
 html.lenis{scroll-behavior:auto}
 /* スマホのFV：最初は波を画面の下に隠し、入口のボタンにかぶらないようにする。スクロールし始めると下から入ってくる（--p の最初の1/3で入りきる） */
-@media(max-width:760px){.motion-on .rise-tide{translate:0 calc((1 - min(1, var(--p,0) * 3)) * (var(--edge) * 1.5 + 8px));will-change:translate}.motion-on .rise-copy{opacity:calc(1 - var(--p,0)*3)}}
+@media(max-width:760px){.motion-on .rise-tide{translate:0 calc(var(--liftmax,0px) - var(--lift,0px) + (1 - min(1, var(--p,0) * 3)) * (var(--edge) * 1.5 + 8px))}.motion-on .rise-copy{opacity:calc(1 - var(--p,0)*3)}}
 /* スマホ：スクロールを促す矢印は入口のボタンと重ならないよう、画面の最下部に置く（波は最初は画面外にある） */
 @media(max-width:760px){.rise-scroll{bottom:max(12px,env(safe-area-inset-bottom));filter:none}.rise-scroll svg{stroke-width:2.4}}
 /* 写真のゆっくりズームは描き直しを避けるため、専用の層で動かす */

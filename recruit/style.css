@@ -1,8 +1,8 @@
 /* yours PAPER（採用特設サイト・確認版）
-   白黒を基調にし、色は写真とキーカラーの黄色（企業サイトと共通の #ffcb45）だけ。
-   見出しは「大きな英字＋日本語」の2段。黄色は文字色にせず、マーカーと面で使う（白地での読みやすさのため）。 */
+   白黒を基調にし、色は写真とキーカラーのオレンジ（2026-11-13 本人指示で黄色 #ffcb45 から変更）だけ。
+   見出しは「大きな英字＋日本語」の2段。オレンジは白地では文字色にせず、マーカーと面で使う（読みやすさのため）。 */
 :root{
-  --ink:#1f2222;--sub:#5d6461;--white:#fffefa;--key:#ffcb45;--line:#d4d6d0;--soft:#f3f2ec;
+  --ink:#1f2222;--sub:#5d6461;--white:#fffefa;--key:#ff8c42;--line:#d4d6d0;--soft:#f3f2ec;
   --g:max(clamp(20px,4.4vw,64px),calc((100vw - 1360px)/2));
   --jp:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif;
   --en:"Arial Black","Helvetica Neue",Arial,sans-serif;

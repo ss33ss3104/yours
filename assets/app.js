@@ -184,7 +184,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
 (() => {
   const sec = document.querySelector('.rise'); if (!sec) return;
   const photo = sec.querySelector('.rise-photo img'), loader = document.querySelector('.site-loader'), header = document.querySelector('.header');
-  const measure = () => sec.style.setProperty('--hh', (header.offsetTop + header.offsetHeight) + 'px');
+  const measure = () => { sec.style.setProperty('--hh', (header.offsetTop + header.offsetHeight) + 'px'); sec.style.setProperty('--liftmax', (stableVH() * .32).toFixed(1) + 'px'); };
   const ready = () => { sec.classList.add('is-ready'); loader?.classList.add('is-done'); };
   sec.querySelectorAll('.rise-copy h1 .ch').forEach(c => { if (c.textContent === '・') c.classList.add('rise-naka'); });
   const assets = Promise.all([
