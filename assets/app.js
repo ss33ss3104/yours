@@ -165,7 +165,10 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
   const loop = t => { lenis?.raf(t); raf = requestAnimationFrame(loop); };
   const on = () => {
     if (lenis) return;
-    lenis = new Lenis({ lerp: .1, smoothWheel: true, syncTouch: true, syncTouchLerp: .07, touchMultiplier: .9, touchInertiaMultiplier: 15, anchors: { offset: -24 } });
+    lenis = new Lenis({
+      // ページの一番上で指を下へ引いたときだけ、Lenisが受け取らずブラウザに返す（iPhoneの引っ張って再読み込みを効かせる）
+      virtualScroll: e => !(e.event.type.includes('touch') && e.deltaY < 0 && window.scrollY <= 0),
+      lerp: .1, smoothWheel: true, syncTouch: true, syncTouchLerp: .07, touchMultiplier: .9, touchInertiaMultiplier: 15, anchors: { offset: -24 } });
     if (!raf) raf = requestAnimationFrame(loop);
   };
   const off = () => { if (!lenis) return; lenis.destroy(); lenis = null; cancelAnimationFrame(raf); raf = 0; };
