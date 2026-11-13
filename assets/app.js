@@ -251,7 +251,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
           const hh = (E + 6).toFixed(1), d = pts.map(([x, y], n) => (n ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1)).join('');
           frontPath.setAttribute('d', `${d}L${W} ${hh}L0 ${hh}Z`);
         } else {
-          const off = tideEl.offsetTop + E * .42;
+          const off = tideEl.getBoundingClientRect().top - stageEl.getBoundingClientRect().top + E * .42;  // スマホ幅の「下から入る」ずらし（translate）も含めた位置
           const d = pts.reverse().map(([x, y]) => 'L' + x.toFixed(1) + ' ' + (y + off).toFixed(1)).join('');
           stageEl.style.clipPath = `path('M0 0L${W} 0${d}Z')`;
           stageEl.classList.add('is-clipped');
