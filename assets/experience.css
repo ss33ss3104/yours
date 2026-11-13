@@ -648,3 +648,6 @@ p,li,dd{text-wrap:pretty}
 html{overflow-x:clip}
 /* Lenis と CSS のなめらかスクロールは競合するので、Lenis が動いている間は CSS 側を切る */
 html.lenis{scroll-behavior:auto}
+/* スマホのFV：最初は波を画面の下に隠し、入口のボタンにかぶらないようにする。スクロールし始めると下から入ってくる（--p の最初の1/3で入りきる） */
+@media(max-width:760px){.motion-on .rise-tide{translate:0 calc((1 - min(1, var(--p,0) * 3)) * (var(--edge) * 1.5 + 8px));will-change:translate}.motion-on .rise-copy{opacity:calc(1 - var(--p,0)*3)}}
+
