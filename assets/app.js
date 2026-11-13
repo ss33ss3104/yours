@@ -141,6 +141,20 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
   if('ResizeObserver' in window){const ro=new ResizeObserver(()=>{measure();onScroll();});ro.observe(document.body);}
 })();
 
+/* 画面の高さ：アドレスバーの出入りで変わらない「小さい画面の高さ」（100svh）を測っておき、スクロール連動の計算に使う。
+   幅が変わったときだけ測り直す（iOSはスクロールのたびにアドレスバーで高さが変わり、resizeが飛ぶため）。 */
+const stableVH = (() => {
+  const probe = document.createElement('div');
+  probe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:100svh;visibility:hidden;pointer-events:none';
+  document.documentElement.appendChild(probe);
+  let vh = probe.offsetHeight || innerHeight, w = innerWidth;
+  addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; vh = probe.offsetHeight || innerHeight; } }, { passive: true });
+  return () => vh;
+})();
+// 幅が変わったときだけ呼ぶresize（高さだけの変化は無視する）
+const onWidthResize = fn => { let w = innerWidth; addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; fn(); } }, { passive: true }); };
+const touchUI = matchMedia('(hover: none), (pointer: coarse)').matches;
+
 /* FV：写真と縦書きのキャッチ・説明・2つの入口。ロード画面は最低1.5秒見せ、写真とフォントが揃ったら本編を始める。届かなくても3.5秒で進める。 */
 (() => {
   const sec = document.querySelector('.rise'); if (!sec) return;
@@ -154,16 +168,16 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
     document.fonts?.load ? document.fonts.load('400 40px "Zen Old Mincho Catch"', 'ま').catch(() => {}) : 0,
   ]);
   Promise.all([Promise.race([assets, new Promise(r => setTimeout(r, 3500))]), new Promise(r => setTimeout(r, 1500))]).then(ready, ready);
-  addEventListener('resize', measure, { passive: true });
+  onWidthResize(measure);
   addEventListener('load', measure);
   measure();
   // 下端の波：FVを画面に留めたまま、画面の45%ぶんのスクロールで生成りを画面の約3割までせり上げる（CSSの .motion-on .rise の高さと対）。動きを止めているときは動かさない
   let queued = false;
   const tide = () => {
     queued = false;
-    const p = document.documentElement.classList.contains('motion-off') ? 0 : Math.min(1, Math.max(0, scrollY / (innerHeight * .45)));
+    const p = document.documentElement.classList.contains('motion-off') ? 0 : Math.min(1, Math.max(0, scrollY / (stableVH() * .45)));
     sec.style.setProperty('--p', p.toFixed(4));
-    sec.style.setProperty('--lift', (p * (2 - p) * innerHeight * .32).toFixed(1) + 'px');
+    sec.style.setProperty('--lift', (p * (2 - p) * stableVH() * .32).toFixed(1) + 'px');
   };
   addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(tide); } }, { passive: true });
   new MutationObserver(tide).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
@@ -199,18 +213,26 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
         L.paths.forEach(p => p.setAttribute('d', `${d}L${W} ${h}L0 ${h}Z`));
       } else {
         // 手前の波は紙を重ねず、FVそのものを波の形で切り抜く。下にはページの紙の地がそのまま見え、ABOUTと継ぎ目なくつながる
-        const off = tideEl.offsetTop + E * .42;
-        const d = pts.reverse().map(([x, y]) => 'L' + x.toFixed(1) + ' ' + (y + off).toFixed(1)).join('');
-        stageEl.style.clipPath = `path('M0 0L${W} 0${d}Z')`;
-        stageEl.classList.add('is-clipped');
+        if (touchUI) {
+          front.classList.add('is-js-wave');
+          // スマホ：FV全体（大きな写真）を毎フレーム切り抜くと描き直しが重いので、紙の帯だけを波の形に切る
+          const hh = (E + 4).toFixed(1), d = pts.map(([x, y], n) => (n ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1)).join('');
+          front.style.clipPath = `path('${d}L${W} ${hh}L0 ${hh}Z')`;
+        } else {
+          const off = tideEl.offsetTop + E * .42;
+          const d = pts.reverse().map(([x, y]) => 'L' + x.toFixed(1) + ' ' + (y + off).toFixed(1)).join('');
+          stageEl.style.clipPath = `path('M0 0L${W} 0${d}Z')`;
+          stageEl.classList.add('is-clipped');
+        }
       }
     });
   };
   const moves = () => document.documentElement.classList.contains('motion-on');
-  const loop = now => { waveRaf = 0; drawWaves(now); if (moves() && seen) waveRaf = requestAnimationFrame(loop); };
+  let lastDraw = 0;
+  const loop = now => { waveRaf = 0; if (!touchUI || now - lastDraw > 32) { lastDraw = now; drawWaves(now); } if (moves() && seen) waveRaf = requestAnimationFrame(loop); };
   const startWaves = () => { if (!waveRaf) waveRaf = requestAnimationFrame(loop); };
   if ('IntersectionObserver' in window) new IntersectionObserver(([en]) => { seen = en.isIntersecting; if (seen) startWaves(); }).observe(tideEl);
-  addEventListener('resize', () => { sizeWaves(); startWaves(); }, { passive: true });
+  onWidthResize(() => { sizeWaves(); startWaves(); });
   new MutationObserver(startWaves).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
   sizeWaves(); startWaves();
 
@@ -251,7 +273,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
   function tick() {
     raf = 0; if (!on()) return;
     const target = clamp(scrollY - top, 0, travel);
-    cur += (target - cur) * .16;
+    cur += (target - cur) * (touchUI ? 1 : .16);
     if (Math.abs(target - cur) < .4) cur = target;
     paint(cur);
     if (cur !== target) raf = requestAnimationFrame(tick);
@@ -260,7 +282,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
   function reset() { [island, copy, ...people].forEach(el => el.style.removeProperty('transform')); }
   function sync() { if (on()) { measure(); cur = clamp(scrollY - top, 0, travel); paint(cur); } else reset(); }
   addEventListener('scroll', kick, { passive: true });
-  addEventListener('resize', sync, { passive: true });
+  onWidthResize(sync);
   addEventListener('load', sync);
   new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ['class'] });
   document.fonts?.ready.then(sync);
