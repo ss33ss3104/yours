@@ -65,7 +65,7 @@ summary,label{font-weight:700}
 .site-loader.is-done{opacity:0;visibility:hidden}
 .site-loader-in{display:flex;align-items:center;gap:clamp(10px,1vw,14px)}
 .site-loader img{display:block;width:clamp(38px,3.2vw,50px);height:auto;animation:loader-mark .7s var(--glide) .1s backwards}
-.site-loader-word{display:flex;overflow:hidden;padding-bottom:.22em;margin-bottom:-.22em;font-family:var(--round-font);font-weight:700;font-size:clamp(36px,3.4vw,52px);line-height:1.2;letter-spacing:-.03em;color:var(--ink)}
+.site-loader-word{display:flex;overflow:hidden;padding:.08em 0 .42em;margin:-.08em 0 -.42em;font-family:var(--round-font);font-weight:700;font-size:clamp(36px,3.4vw,52px);line-height:1.2;letter-spacing:-.03em;color:var(--ink)}
 .site-loader-word i{display:block;font-style:normal;animation:loader-char .6s var(--glide) calc(var(--n)*70ms + .3s) backwards}
 html.motion-off .site-loader{display:none}
 @media(prefers-reduced-motion:reduce){.site-loader{display:none}}
@@ -105,7 +105,8 @@ html.motion-off .site-loader{display:none}
 .rise-btn:hover svg{transform:translateX(5px)}
 .rise-btn.is-fill{background:var(--key);color:var(--ink);box-shadow:0 6px 18px rgba(60,40,0,.28)}
 .rise-btn.is-fill:hover{background:var(--key-deep)}
-.rise-btn.is-line{border:1.5px solid rgba(255,255,255,.92);background:rgba(8,34,72,.32);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);text-shadow:0 1px 4px rgba(6,26,56,.45)}
+/* 背景のぼかし（backdrop-filter）は、出てくる動きの途中では効かず、終わった瞬間に効いて色が変わって見えるため使わない */
+.rise-btn.is-line{border:1.5px solid rgba(255,255,255,.92);background:rgba(8,34,72,.42);text-shadow:0 1px 4px rgba(6,26,56,.45)}
 .rise-btn.is-line:hover{background:rgba(8,34,72,.5)}
 .rise-btn:focus-visible,.rise-scroll:focus-visible{outline:3px solid var(--key);outline-offset:4px}
 /* 2026-11-13 案C（本人選択）：ボタンの外へ輪が広がって消える。左右のボタンで交互に。
@@ -132,7 +133,8 @@ body:has(.rise) .header:not(.is-stuck) .brand,body:has(.rise) .header:not(.is-st
 }
 @media(max-width:850px){
  .rise{--hh:110px}
- body:has(.rise) .header:not(.is-stuck) .menu-toggle{color:#fff;border-color:#fff}
+ /* FVの上のメニューボタンは、入口の「見学・相談」ボタンと同じ見た目（白い枠・紺の半透明・白い文字）にそろえる */
+ body:has(.rise) .header:not(.is-stuck) .menu-toggle{color:#fff;border:1.5px solid rgba(255,255,255,.92);background:rgba(8,34,72,.42);font-size:13px;letter-spacing:.08em;padding:10px 20px;text-shadow:0 1px 4px rgba(6,26,56,.45)}
 }
 @media(max-width:760px){
  .rise-photo img{object-position:22% 100%;transform-origin:70% 72%}
