@@ -165,7 +165,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
   const loop = t => { lenis?.raf(t); raf = requestAnimationFrame(loop); };
   const on = () => {
     if (lenis) return;
-    lenis = new Lenis({ lerp: .1, smoothWheel: true, syncTouch: true, syncTouchLerp: .075, touchInertiaMultiplier: 30, anchors: { offset: -24 } });
+    lenis = new Lenis({ lerp: .1, smoothWheel: true, syncTouch: true, syncTouchLerp: .07, touchMultiplier: .9, touchInertiaMultiplier: 15, anchors: { offset: -24 } });
     if (!raf) raf = requestAnimationFrame(loop);
   };
   const off = () => { if (!lenis) return; lenis.destroy(); lenis = null; cancelAnimationFrame(raf); raf = 0; };
