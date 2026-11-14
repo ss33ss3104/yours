@@ -140,7 +140,8 @@ body:has(.rise) .header:not(.is-stuck) .brand,body:has(.rise) .header:not(.is-st
  body:has(.rise) .header:not(.is-stuck) .menu-toggle{color:#fff;border:1.5px solid rgba(255,255,255,.92);background:rgba(8,34,72,.42);font-size:13px;letter-spacing:.08em;padding:10px 20px;text-shadow:0 1px 4px rgba(6,26,56,.45)}
 }
 @media(max-width:760px){
- .rise-photo img{object-position:22% 100%;transform-origin:70% 72%}
+ /* スマホ：文字が右にあるので、福岡タワーが画面の左寄り（約3割）に来る位置で切り取る（2026-11-14 本人指示） */
+ .rise-photo img{object-position:39% 100%;transform-origin:70% 72%}
  /* スマホ：写真全体は暗くせず、ロゴ・メニュー（上）、縦書きのキャッチ（左）、説明・ボタン（下）の裏だけを沈める */
  .rise-photo::after{background:linear-gradient(180deg,rgba(8,34,72,.42),rgba(8,34,72,.14) 9%,rgba(8,34,72,0) 15%),radial-gradient(ellipse 38% 32% at 76% 40%,rgba(8,34,72,.58),rgba(8,34,72,.28) 55%,rgba(8,34,72,0) 88%),radial-gradient(ellipse 72% 15% at 50% 74%,rgba(8,30,62,.62),rgba(8,30,62,.3) 55%,rgba(8,30,62,0) 92%)}
  /* スマホ：縦書きのキャッチ・説明・ボタンを画面の右に寄せる（2026-11-14 本人指示） */
@@ -677,5 +678,17 @@ html.lenis{scroll-behavior:auto}
  .walker{width:28vw}.worker-a{width:23vw}.worker-b{width:23vw}
  .float{width:13vw}.chapter-live .f1,.chapter-work .f1{width:19vw}.chapter-live .f3,.chapter-work .f3{width:11vw}
  .chapter-word{font-size:30vw}
+}
+/* 2026-11-14 スマホのFVは動きをシンプルにする（本人指示）。読み込み時に一度ふわっと出るだけにし、くり返す動きと重い描画をやめる。
+   Codexのレビュー（work/review/261114_codex_scroll_review.md）で挙がったスマホの負担もあわせて外す */
+@media(max-width:760px){
+ .rise.is-ready .rise-photo img{animation:rise-appear 1.2s ease backwards;will-change:auto}  /* ゆっくりズームをやめる */
+ .motion-on .rise.is-ready .rise-copy h1 .ch{animation:none}                                  /* 1文字ずつ出る動きをやめ、まとめて出す */
+ .rise.is-ready .rise-copy h1{animation:rise-appear 1s ease .5s backwards}
+ .rise-btn::after{display:none}                                                              /* ボタンの輪のくり返しをやめる */
+ .rise.is-ready .rise-scroll{animation:rise-appear .8s ease 1.6s backwards}                  /* 矢印の上下のくり返しをやめる */
+ .header.is-stuck{-webkit-backdrop-filter:none;backdrop-filter:none;background:#fbf7ec}      /* 背景のぼかしをやめ、不透明に */
+ .town-stage .rise-island img{filter:none}                                                   /* 街のイラストの大きな影をやめる */
+ body::before{position:absolute;background-size:900px auto;background-repeat:repeat;background-position:0 0}  /* 紙の背景を画面固定にせず、ページと一緒に流す */
 }
 

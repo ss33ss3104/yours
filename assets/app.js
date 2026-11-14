@@ -13,6 +13,8 @@ const onWidthResize = fn => { let w = innerWidth; addEventListener('resize', () 
 const touchUI = matchMedia('(hover: none), (pointer: coarse)').matches;
 // スマホ幅（760px以下）では、FVとABOUTを画面に留めるスクロール演出を使わない（CSSの min-width:761px と対）
 const narrowMQ = matchMedia('(max-width: 760px)');
+// html の motion-on が実際に切り替わったときだけ fn を呼ぶ（Lenis はスクロールの始まり・終わりに html のクラスを書き換えるため、クラスの変化全部には反応しない）
+const onMotionChange = fn => { const root = document.documentElement; let st = root.classList.contains('motion-on'); new MutationObserver(() => { const now = root.classList.contains('motion-on'); if (now !== st) { st = now; fn(); } }).observe(root, { attributes: true, attributeFilter: ['class'] }); };
 
 
 const chosen=new URLSearchParams(location.search).get('service');
@@ -78,15 +80,17 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
   const track=document.querySelector('[data-band]');
   const days=[...document.querySelectorAll('.day-list')].map(el=>({el,top:0,height:0}));
   let vh=stableVH();
+  let trackW=0;
   const measure=()=>{
     vh=stableVH();
+    trackW=track?track.scrollWidth/2:0;
     const y=scrollY;
     items.forEach(it=>{const r=it.anchor.getBoundingClientRect();it.top=r.top+y;it.height=r.height;it.width=it.anchor.clientWidth;});
     days.forEach(d=>{const r=d.el.getBoundingClientRect();d.top=r.top+y;d.height=r.height;});
   };
   const paint=()=>{
     const y=scrollY;
-    if(track)track.style.transform=`translate3d(${-(y*.32)%(track.scrollWidth/2)}px,0,0)`;
+    if(track&&trackW)track.style.transform=`translate3d(${-(y*.32)%trackW}px,0,0)`;
     items.forEach(it=>{
       if(y+vh<it.top-200||y>it.top+it.height+200)return;
       const p=clamp((y+vh-it.top)/(vh+it.height),0,1);
@@ -162,7 +166,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
 /* なめらかなスクロール（Lenis 1.1.20・MIT、assets/vendor/）。試用中：URLに ?lenis=0 を付けると無効にして比べられる。
    スマホの指のスクロールにも効かせる（syncTouch）。動きを止める設定・動きを減らす設定・メニューを開いている間は使わない。 */
 (() => {
-  if (!window.Lenis || new URLSearchParams(location.search).get('lenis') === '0' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!window.Lenis || touchUI || new URLSearchParams(location.search).get('lenis') === '0' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const root = document.documentElement;
   let lenis = null, raf = 0;
   const loop = t => { lenis?.raf(t); raf = requestAnimationFrame(loop); };
@@ -180,7 +184,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
     on();
     if (document.body.classList.contains('nav-open')) lenis.stop(); else lenis.start();
   };
-  new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ['class'] });
+  onMotionChange(sync);
   new MutationObserver(sync).observe(document.body, { attributes: true, attributeFilter: ['class'] });
   sync();
   window.__lenis = () => lenis;
@@ -203,16 +207,17 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
   addEventListener('load', measure);
   measure();
   // 下端の波：FVを画面に留めたまま、画面の45%ぶんのスクロールで生成りを画面の約3割までせり上げる（CSSの .motion-on .rise の高さと対）。動きを止めているときは動かさない
-  let queued = false;
+  let queued = false, lastP = -1;
   const tide = () => {
     queued = false;
     const p = document.documentElement.classList.contains('motion-off') || narrowMQ.matches ? 0 : Math.min(1, Math.max(0, scrollY / (stableVH() * .45)));
+    if (p === lastP) return; lastP = p;  // 同じ値は書かない（CSS変数の書き換えは子要素すべての再計算になる）
     sec.style.setProperty('--p', p.toFixed(4));
     // 波は指の動きと同じ一定の速さで上がる（以前は最初が速く途中で止まる曲線で、急に加速・減速して感じられた）
     sec.style.setProperty('--lift', (p * stableVH() * .32).toFixed(1) + 'px');
   };
-  addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(tide); } }, { passive: true });
-  new MutationObserver(tide).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  addEventListener('scroll', () => { if (narrowMQ.matches || queued) return; queued = true; requestAnimationFrame(tide); }, { passive: true });
+  onMotionChange(tide);
   tide();
 
   // 下端の3層の波を、コードで描いた波形で動かす。長さの違う2つの波を逆向きに進めて重ね、同じ形が横に流れるのではなく水面のようにうねらせる
@@ -274,7 +279,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
   const startWaves = () => { if (touchUI) { drawWaves(0, true); return; } if (!waveRaf) waveRaf = requestAnimationFrame(loop); };
   if ('IntersectionObserver' in window) new IntersectionObserver(([en]) => { seen = en.isIntersecting; if (seen) startWaves(); }).observe(tideEl);
   onWidthResize(() => { sizeWaves(); startWaves(); });
-  new MutationObserver(startWaves).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  onMotionChange(startWaves);
   sizeWaves(); startWaves();
 
 })();
@@ -319,13 +324,13 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
     paint(cur);
     if (cur !== target) raf = requestAnimationFrame(tick);
   }
-  const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+  const kick = () => { if (!raf && on()) raf = requestAnimationFrame(tick); };
   function reset() { [island, copy, ...people].forEach(el => el.style.removeProperty('transform')); }
   function sync() { if (on()) { measure(); cur = clamp(scrollY - top, 0, travel); paint(cur); } else reset(); }
   addEventListener('scroll', kick, { passive: true });
   onWidthResize(sync);
   addEventListener('load', sync);
-  new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ['class'] });
+  onMotionChange(sync);
   document.fonts?.ready.then(sync);
   sync();
 })();
