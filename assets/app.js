@@ -11,6 +11,8 @@ const stableVH = (() => {
 // 幅が変わったときだけ呼ぶresize（高さだけの変化は無視する）
 const onWidthResize = fn => { let w = innerWidth; addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; fn(); } }, { passive: true }); };
 const touchUI = matchMedia('(hover: none), (pointer: coarse)').matches;
+// スマホ幅（760px以下）では、FVとABOUTを画面に留めるスクロール演出を使わない（CSSの min-width:761px と対）
+const narrowMQ = matchMedia('(max-width: 760px)');
 
 
 const chosen=new URLSearchParams(location.search).get('service');
@@ -131,8 +133,9 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
   // 揺れるWebPと静止画を切り替える。
   const boilSources=[...document.querySelectorAll('source[data-boil]')];
   boilSources.forEach(s=>{s.dataset.src=s.getAttribute('srcset');});
+  // 同じ値を入れ直すと、iPhoneで画像が選び直されて表示されないことがあるため、変わるときだけ書き換える
   const syncBoil=()=>boilSources.forEach(s=>{
-    if(moving())s.setAttribute('srcset',s.dataset.src);else s.removeAttribute('srcset');
+    if(moving()){if(s.getAttribute('srcset')!==s.dataset.src)s.setAttribute('srcset',s.dataset.src);}else if(s.hasAttribute('srcset'))s.removeAttribute('srcset');
   });
 
   const toggle=document.querySelector('.motion-toggle');
@@ -203,7 +206,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
   let queued = false;
   const tide = () => {
     queued = false;
-    const p = document.documentElement.classList.contains('motion-off') ? 0 : Math.min(1, Math.max(0, scrollY / (stableVH() * .45)));
+    const p = document.documentElement.classList.contains('motion-off') || narrowMQ.matches ? 0 : Math.min(1, Math.max(0, scrollY / (stableVH() * .45)));
     sec.style.setProperty('--p', p.toFixed(4));
     // 波は指の動きと同じ一定の速さで上がる（以前は最初が速く途中で止まる曲線で、急に加速・減速して感じられた）
     sec.style.setProperty('--lift', (p * stableVH() * .32).toFixed(1) + 'px');
@@ -285,7 +288,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
   const seg = (p, a, b) => clamp((p - a) / (b - a));
   const ease = t => t * t * (3 - 2 * t), mix = (a, b, t) => a + (b - a) * t;
   const backOut = t => { const s = 1.5, u = t - 1; return 1 + u * u * ((s + 1) * u + s); };
-  const on = () => root.classList.contains('motion-on');
+  const on = () => root.classList.contains('motion-on') && !narrowMQ.matches;
   let H = 0, top = 0, travel = 1, iw = 0, y0 = 0, y1 = 0, copy0 = 0, cur = 0, raf = 0;
   function measure() {
     if (!on()) return;

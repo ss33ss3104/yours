@@ -15,7 +15,9 @@
 html{scroll-padding-top:96px}
 body{font-weight:400;font-size:var(--fs-body);line-height:2;color:var(--ink);overflow-x:clip;font-feature-settings:"palt" 1;letter-spacing:.03em}
 h1,h2,h3,strong,b,.phone,.button{font-weight:700}
-p,li,dd,dt,summary,label,input,select,textarea,button,.small{font-weight:400}
+/* 説明文は中太（500）。2026-11-14 本人指示「細くて読みにくい」 */
+p,li,dd,.small{font-weight:500}
+dt,summary,label,input,select,textarea,button{font-weight:400}
 summary,label{font-weight:700}
 .small,small{font-size:14px}
 .muted{color:var(--muted)}
@@ -140,11 +142,12 @@ body:has(.rise) .header:not(.is-stuck) .brand,body:has(.rise) .header:not(.is-st
 @media(max-width:760px){
  .rise-photo img{object-position:22% 100%;transform-origin:70% 72%}
  /* スマホ：写真全体は暗くせず、ロゴ・メニュー（上）、縦書きのキャッチ（左）、説明・ボタン（下）の裏だけを沈める */
- .rise-photo::after{background:linear-gradient(180deg,rgba(8,34,72,.42),rgba(8,34,72,.14) 9%,rgba(8,34,72,0) 15%),radial-gradient(ellipse 38% 32% at 24% 40%,rgba(8,34,72,.58),rgba(8,34,72,.28) 55%,rgba(8,34,72,0) 88%),radial-gradient(ellipse 72% 15% at 50% 74%,rgba(8,30,62,.62),rgba(8,30,62,.3) 55%,rgba(8,30,62,0) 92%)}
- .rise-copy{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:0;padding:calc(var(--hh) + 3svh) 22px 0}
+ .rise-photo::after{background:linear-gradient(180deg,rgba(8,34,72,.42),rgba(8,34,72,.14) 9%,rgba(8,34,72,0) 15%),radial-gradient(ellipse 38% 32% at 76% 40%,rgba(8,34,72,.58),rgba(8,34,72,.28) 55%,rgba(8,34,72,0) 88%),radial-gradient(ellipse 72% 15% at 50% 74%,rgba(8,30,62,.62),rgba(8,30,62,.3) 55%,rgba(8,30,62,0) 92%)}
+ /* スマホ：縦書きのキャッチ・説明・ボタンを画面の右に寄せる（2026-11-14 本人指示） */
+ .rise-copy{flex-direction:column;align-items:flex-end;justify-content:flex-start;gap:0;padding:calc(var(--hh) + 3svh) 22px 0}
  .rise-copy{--cs:min(8.2vw,4.4svh)}
- .rise-info{align-self:stretch;padding:0;margin:clamp(18px,3svh,28px) 0 0;text-align:left}
- .rise-info .rise-rule{margin-left:0}
+ .rise-info{align-self:stretch;padding:0;margin:clamp(18px,3svh,28px) 0 0;text-align:right}
+ .rise-info .rise-rule{margin-left:auto}
  .rise-lead{font-size:14px;letter-spacing:.06em;line-height:1.75}
  .rise-actions{flex-wrap:nowrap;gap:10px;margin-top:clamp(16px,2.6svh,24px)}
  .rise-btn{min-width:0;flex:1 1 0;min-height:50px;padding:0 14px 0 18px;gap:8px;font-size:14px;letter-spacing:.02em;white-space:nowrap}
@@ -187,13 +190,13 @@ body:has(.rise) .header:not(.is-stuck) .brand,body:has(.rise) .header:not(.is-st
 .tide-body{top:calc(var(--edge)*1.42 - 2px);bottom:0}
 @media(hover:none),(max-width:760px){.tide-wave,.tide-body{background:#f5f0e5}}
 /* ABOUTを波に寄せる：満ちた生成りの上にそのまま見出しが乗ってくるよう、せり上がった分だけ重ねる */
-.motion-on .rise+.town-story{position:relative;z-index:2;margin-top:calc(var(--edge)*-1.5 - 32svh)}
+@media(min-width:761px){.motion-on .rise+.town-story{position:relative;z-index:2;margin-top:calc(var(--edge)*-1.5 - 32svh)}}
 .rise-photo{scale:calc(1 + var(--p,0)*.06);will-change:scale}
 /* 写真を暗くする層。明るさのフィルターは毎回描き直しになるので、重ねた色の濃さで沈める */
 .rise-shade{position:absolute;inset:0;z-index:1;background:#0b1f36;opacity:calc(var(--p,0)*.42);pointer-events:none;will-change:opacity}
 /* 動きがあるときはFVを画面に留め、画面の45%ぶんのスクロールで波を大きくせり上げる */
-.motion-on .rise{height:calc(max(100svh,600px) + 45svh)}
-.motion-on .rise-stage{position:sticky;top:0}
+/* PCだけ：FVを画面に留め、波をせり上げる。スマホは留めずに普通にスクロールする（指の動きのままで一番なめらか） */
+@media(min-width:761px){.motion-on .rise{height:calc(max(100svh,600px) + 45svh)}.motion-on .rise-stage{position:sticky;top:0}}
 .rise-copy{opacity:calc(1 - var(--p,0)*1.7);translate:0 calc(var(--p,0)*-10svh)}
 .rise-scroll{bottom:calc(var(--edge)*1.5 + 6px);opacity:calc(1 - var(--p,0)*3)}
 .rise-info{margin-bottom:calc(var(--edge)*1.5 + 4svh)}
@@ -562,6 +565,8 @@ details p{font-size:var(--fs-body);margin:0 0 22px;padding-right:32px}
  .rise-person.is-wide{display:none}
 }
 @media(max-width:360px){.town-stage .rise-island{width:116vw;margin-left:-8vw}}
+/* PCだけ：ABOUTの画面を留めて、街のイラストをせり上げる。スマホは止めずに、完成形の1枚として流す */
+@media(min-width:761px){
 .motion-on .town-story{height:220svh}
 .motion-on .town-stage{position:sticky;top:0;height:100svh;padding:0}
 .motion-on .town-copy{position:absolute;left:0;right:0;top:calc(76px + 2svh);padding-top:0;padding-bottom:0}
@@ -570,7 +575,8 @@ details p{font-size:var(--fs-body);margin:0 0 22px;padding-right:32px}
 .motion-on .rise-person{will-change:transform;transform:translateY(120%)}
 .motion-on .town-stage .rise-wave{animation:rise-sway-front 4.6s ease-in-out infinite alternate}
 .motion-on .town-stage .rise-waveback{animation:rise-sway-back 3.6s ease-in-out infinite alternate}
-@media(max-width:760px){.motion-on .town-copy{top:calc(66px + 1svh)}}
+}
+
 @keyframes rise-float{from{translate:0 -5px;rotate:-.25deg}to{translate:0 7px;rotate:.25deg}}
 @keyframes rise-sway-front{to{translate:0 14px}}
 @keyframes rise-sway-back{to{translate:0 30px}}
@@ -650,10 +656,26 @@ p,li,dd{text-wrap:pretty}
 html{overflow-x:clip}
 /* Lenis と CSS のなめらかスクロールは競合するので、Lenis が動いている間は CSS 側を切る */
 html.lenis{scroll-behavior:auto}
-/* スマホのFV：最初は波を画面の下に隠し、入口のボタンにかぶらないようにする。スクロールに合わせて一定の速さで下から入ってくる */
-@media(max-width:760px){.motion-on .rise-tide{translate:0 calc(var(--liftmax,0px) - var(--lift,0px) + (1 - var(--p,0)) * (var(--edge) * 1.5 + 8px))}.motion-on .rise-copy{opacity:calc(1 - var(--p,0)*3)}}
+
 /* スマホ：スクロールを促す矢印は入口のボタンと重ならないよう、画面の最下部に置く（波は最初は画面外にある） */
 @media(max-width:760px){.rise-scroll{bottom:max(12px,env(safe-area-inset-bottom));filter:none}.rise-scroll svg{stroke-width:2.4}}
 /* 写真のゆっくりズームは描き直しを避けるため、専用の層で動かす */
 .rise.is-ready .rise-photo img{will-change:transform}
+/* スマホ：スクロールの矢印は波（紙の色）の上に来るので、墨色にする */
+@media(max-width:760px){.rise-scroll{color:var(--ink)}}
+/* 2026-11-14 本人指示：説明の文字が細く読みにくい。見出し・ボタン・ラベルは丸ゴシック（筑紫A丸）のまま、
+   説明文だけを端末のゴシック体の中太（500）にして、見出しとのメリハリをつける。特定の箇所は :where で詳細度0にし、各部品の指定を優先する */
+:root{--text-font:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Noto Sans CJK JP","Yu Gothic UI","Yu Gothic",Meiryo,sans-serif}
+:where(main) :where(p,li,dd,td,figcaption,.faq-a,details>p):not(:where(.section-label,.chapter-no,.price,.breadcrumb,.message-big,.office-name,.office-label,.tag,.chapter-tags li,.quicknav a,.rise-lead)){font-family:var(--text-font);font-weight:500;letter-spacing:.02em}
+/* スマホ：トップのGH・就労のカード（オレンジ・青）の縦の長さを詰める。イラストの場所を低くし、余白を減らす */
+@media(max-width:600px){
+ .chapter-copy,.chapter-live .chapter-copy,.chapter-work .chapter-copy{padding:36px 22px 0}
+ .chapter-copy>p:not(.chapter-no){font-size:15px;line-height:1.85;margin-bottom:16px}
+ .chapter h3{margin-bottom:12px}
+ .chapter-tags{margin-bottom:18px}
+ .chapter-stage{min-height:0;height:46vw;max-height:230px}
+ .walker{width:28vw}.worker-a{width:23vw}.worker-b{width:23vw}
+ .float{width:13vw}.chapter-live .f1,.chapter-work .f1{width:19vw}.chapter-live .f3,.chapter-work .f3{width:11vw}
+ .chapter-word{font-size:30vw}
+}
 
