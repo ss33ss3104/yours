@@ -690,5 +690,11 @@ html.lenis{scroll-behavior:auto}
  .header.is-stuck{-webkit-backdrop-filter:none;backdrop-filter:none;background:#fbf7ec}      /* 背景のぼかしをやめ、不透明に */
  .town-stage .rise-island img{filter:none}                                                   /* 街のイラストの大きな影をやめる */
  body::before{position:absolute;background-size:900px auto;background-repeat:repeat;background-position:0 0}  /* 紙の背景を画面固定にせず、ページと一緒に流す */
+ /* 画面中央で起きていた拡大の出現をやめ、ふわっと出るだけにする */
+ .motion-on .ch,.motion-on .is-in .ch{display:inline;opacity:1;transform:none;transition:none}  /* 見出しの1文字ずつの拡大・回転をやめる */
+ .motion-on .chapter.rv{transform:none;transition:none}                                       /* 大きなカードの下からのせり上がりをやめる */
+ .motion-on .chapter .sticker.float{scale:1;rotate:0deg;transition:opacity .6s ease .2s}       /* 絵の弾む拡大をやめ、ふわっと出す */
+ .motion-on .chapter.is-in .sticker.float,.motion-on .chapter.is-in .sticker.float.f1,.motion-on .chapter.is-in .sticker.float.f2,.motion-on .chapter.is-in .sticker.float.f3{animation:none}  /* 絵のくり返しの弾みもやめる */
+ .motion-on .rv{transform:none;transition:opacity .6s ease}                                    /* そのほかも移動なしの透明度だけ */
 }
 
