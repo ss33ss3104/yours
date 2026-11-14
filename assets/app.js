@@ -130,7 +130,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
   const compactMQ=matchMedia('(max-width: 850px)');
   const heroEl=document.querySelector('.rise');
   let heroEnd=140;
-  const measureHero=()=>{heroEnd=heroEl?Math.max(140,heroEl.offsetTop+heroEl.offsetHeight-80):140;};
+  const measureHero=()=>{heroEnd=heroEl?Math.max(140,heroEl.offsetTop+heroEl.offsetHeight*.55):140;};
   measureHero();addEventListener('load',measureHero);onWidthResize(measureHero);
   const onHeader=()=>{
     const y=scrollY;
@@ -347,6 +347,11 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
   onMotionChange(sync);
   document.fonts?.ready.then(sync);
   sync();
+  // スマホ：画面に入ったら一度だけ「is-up」を付け、CSSのせり上がり（位置の移動だけ）を始める
+  if ('IntersectionObserver' in window) {
+    const up = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { stage.classList.add('is-up'); up.disconnect(); } }), { threshold: .3 });
+    up.observe(stage);
+  } else stage.classList.add('is-up');
 })();
 
 // トップFVの写真が、画面の中でマウスに少し引っ張られる。マウスのある端末だけ。動きを止めている間・動きを減らす設定では動かさない。
