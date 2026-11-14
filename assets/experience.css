@@ -125,7 +125,7 @@ html.motion-off .rise-btn::after{display:none}
 /* 写真の上のヘッダーは白い文字にし、項目をスラッシュで区切る */
 body:has(.rise) .header:not(.is-stuck) .brand,body:has(.rise) .header:not(.is-stuck) .brand strong{color:#fff}
 body:has(.rise) .header:not(.is-stuck) .brand span{color:#fff;font-size:12px;letter-spacing:.08em;font-weight:700}
-body:has(.rise) .header:not(.is-stuck) .brand-mark{filter:brightness(0) invert(1)}
+body:has(.rise) .header:not(.is-stuck) .brand-mark{filter:brightness(0) invert(1) drop-shadow(0 0 1px rgba(6,26,56,.5)) drop-shadow(0 1px 4px rgba(6,26,56,.5))}  /* 「yours」の文字と同じ影 */
 body:has(.rise) .header:not(.is-stuck) .brand,body:has(.rise) .header:not(.is-stuck) .nav{text-shadow:0 0 2px rgba(6,26,56,.5),0 1px 8px rgba(6,26,56,.5)}
 @media(min-width:851px){
  body:has(.rise) .header:not(.is-stuck) .nav{color:#fff;gap:0;background:none;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
@@ -704,7 +704,7 @@ html.lenis{scroll-behavior:auto}
  .header.is-compact{background:transparent;box-shadow:none;pointer-events:none}
  .header .brand{transition:opacity .3s ease,visibility .3s}
  .header.is-compact .brand{opacity:0;visibility:hidden}
- html body:not(.nav-open) .header .wrap .menu-toggle.menu-toggle{pointer-events:auto;position:relative;width:50px;height:50px;min-height:0;padding:0;border-radius:50%;font-size:0;color:var(--ink);background:#fbf7ec;border:1.5px solid var(--ink);box-shadow:0 3px 0 var(--ink);text-shadow:none}
+ html body:not(.nav-open) .header .wrap .menu-toggle.menu-toggle{pointer-events:auto;position:relative;width:50px;height:50px;min-height:0;padding:0;border-radius:50%;font-size:0;color:#fff;background:rgba(8,34,72,.42);border:1.5px solid rgba(255,255,255,.92);box-shadow:none;text-shadow:none}  /* FVの「見学・相談」と同じ（白い枠・紺の半透明・白） */
  html body:not(.nav-open) .header .wrap .menu-toggle.menu-toggle::before{content:"";position:absolute;left:15px;right:15px;top:50%;height:2px;margin-top:-1px;border-radius:2px;background:currentColor;box-shadow:0 -6px 0 currentColor,0 6px 0 currentColor}
  html body.nav-open .header.is-compact{background:#fbf7ec;box-shadow:0 1px 0 rgba(35,41,43,.08);pointer-events:auto}
  html body.nav-open .header.is-compact .brand{opacity:1;visibility:visible}
@@ -723,4 +723,17 @@ html.lenis{scroll-behavior:auto}
  .motion-on .town-stage.is-up .rise-person:nth-child(3){transition-delay:1s}
  .motion-on .town-stage.is-up .rise-person:nth-child(4){transition-delay:1.15s}
  .motion-on .town-stage.is-up .rise-person:nth-child(n+5){transition-delay:1.3s}
+}
+
+/* 右下の「動きを止める」ボタンは使わない（2026-11-14 本人指示）。動きを減らす端末設定には従う */
+.motion-toggle{display:none!important}
+/* メニューを開いたときは、項目の文字に影を付けない */
+html body.nav-open:has(.header) .header .nav,html body.nav-open:has(.header) .header .nav a{text-shadow:none}
+/* スマホでも4人を出す。小さめにして横に並べる（左から 歩く・コーヒー・かばん・スケボー） */
+@media(max-width:760px){
+ .rise-person,.rise-person.is-wide{display:block;height:calc(var(--h)*.58)}
+ .rise-cast .rise-person:nth-child(1){left:-2vw!important}
+ .rise-cast .rise-person:nth-child(2){left:30vw!important}
+ .rise-cast .rise-person:nth-child(3){right:25vw!important}
+ .rise-cast .rise-person:nth-child(4){right:-2vw!important}
 }

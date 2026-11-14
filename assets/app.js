@@ -34,7 +34,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
   const root=document.documentElement;
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
   const store={get(){try{return localStorage.getItem('yours-motion')}catch{return null}},set(v){try{localStorage.setItem('yours-motion',v)}catch{}}};
-  let stopped=store.get()==='off';
+  let stopped=false;  // 停止ボタンを廃止したため、以前に保存した「止める」は使わない
   const moving=()=>!reduce.matches&&!stopped;
   const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 
