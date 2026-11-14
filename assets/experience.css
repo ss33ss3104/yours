@@ -698,3 +698,16 @@ html.lenis{scroll-behavior:auto}
  .motion-on .rv{transform:none;transition:opacity .6s ease}                                    /* そのほかも移動なしの透明度だけ */
 }
 
+
+/* スマホ・タブレット：FVを過ぎたら、右上の丸いハンバーガーボタンだけを残す（2026-11-14 本人指示）。メニューを開いたときは通常の帯に戻す。 */
+@media(max-width:850px){
+ .header.is-compact{background:transparent;box-shadow:none;pointer-events:none}
+ .header .brand{transition:opacity .3s ease,visibility .3s}
+ .header.is-compact .brand{opacity:0;visibility:hidden}
+ html body .header.is-compact .menu-toggle{pointer-events:auto;position:relative;width:50px;height:50px;min-height:0;padding:0;border-radius:50%;font-size:0;color:var(--ink);background:#fbf7ec;border:1.5px solid var(--ink);box-shadow:0 3px 0 var(--ink);text-shadow:none}
+ html body .header.is-compact .menu-toggle::before{content:"";position:absolute;left:15px;right:15px;top:50%;height:2px;margin-top:-1px;border-radius:2px;background:currentColor;box-shadow:0 -6px 0 currentColor,0 6px 0 currentColor}
+ html body.nav-open .header.is-compact{background:#fbf7ec;box-shadow:0 1px 0 rgba(35,41,43,.08);pointer-events:auto}
+ html body.nav-open .header.is-compact .brand{opacity:1;visibility:visible}
+ html body.nav-open .header.is-compact .menu-toggle{width:auto;height:auto;min-height:44px;padding:10px 18px;border-radius:999px;font-size:12px;box-shadow:none}
+ html body.nav-open .header.is-compact .menu-toggle::before{display:none}
+}

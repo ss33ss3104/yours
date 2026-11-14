@@ -126,8 +126,22 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
   // 追従するヘッダー。下へ読むときは隠し、上へ戻ると現れる。
   const header=document.querySelector('.header');
   let lastY=scrollY;
+  // スマホ・タブレット幅（850px以下）：FVの間はヘッダーをそのまま見せ、FVを過ぎたら右上のハンバーガーだけを残す（隠さない）。
+  const compactMQ=matchMedia('(max-width: 850px)');
+  const heroEl=document.querySelector('.rise');
+  let heroEnd=140;
+  const measureHero=()=>{heroEnd=heroEl?Math.max(140,heroEl.offsetTop+heroEl.offsetHeight-80):140;};
+  measureHero();addEventListener('load',measureHero);onWidthResize(measureHero);
   const onHeader=()=>{
     const y=scrollY;
+    if(compactMQ.matches){
+      const past=y>heroEnd;
+      header?.classList.toggle('is-stuck',past);
+      header?.classList.toggle('is-compact',past);
+      header?.classList.remove('is-hidden');
+      lastY=y;return;
+    }
+    header?.classList.remove('is-compact');
     header?.classList.toggle('is-stuck',y>140);
     if(document.body.classList.contains('nav-open'))header?.classList.remove('is-hidden');
     else if(Math.abs(y-lastY)>6){header?.classList.toggle('is-hidden',y>lastY&&y>420);}
