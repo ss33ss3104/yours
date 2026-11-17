@@ -208,7 +208,10 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuButton?.getAttr
 (() => {
   const sec = document.querySelector('.rise'); if (!sec) return;
   const photo = sec.querySelector('.rise-photo img'), loader = document.querySelector('.site-loader'), header = document.querySelector('.header');
-  const measure = () => { sec.style.setProperty('--hh', (header.offsetTop + header.offsetHeight) + 'px'); sec.style.setProperty('--liftmax', (stableVH() * .32).toFixed(1) + 'px'); };
+  // ヘッダーは sticky なので、スクロール済みで読み込むと offsetTop にスクロール量が入る（#services から開くとFVが数千px上へずれていた）。
+  // ページ先頭での位置は、直前の通常配置の要素（確認版の帯など）の下端で求める。
+  const headTop = () => { for (let e = header.previousElementSibling; e; e = e.previousElementSibling) { const p = getComputedStyle(e).position; if (p === 'static' || p === 'relative') return e.offsetTop + e.offsetHeight; } return 0; };
+  const measure = () => { sec.style.setProperty('--hh', (headTop() + header.offsetHeight) + 'px'); sec.style.setProperty('--liftmax', (stableVH() * .32).toFixed(1) + 'px'); };
   const ready = () => { sec.classList.add('is-ready'); loader?.classList.add('is-done'); };
   sec.querySelectorAll('.rise-copy h1 .ch').forEach(c => { if (c.textContent === '・') c.classList.add('rise-naka'); });
   const assets = Promise.all([
